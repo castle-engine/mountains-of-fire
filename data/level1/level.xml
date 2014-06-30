@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<level
+  name="mountains"
+  scene="level1.x3dv"
+  title="Mountains"
+  number="1"
+  type="Level"
+  placeholders="blender"
+  loading_image="skybox/gloomy_preview.jpg"
+  music_sound="music"
+>
+</level>

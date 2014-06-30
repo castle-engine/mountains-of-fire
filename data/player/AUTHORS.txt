@@ -1,0 +1,8 @@
+http://opengameart.org/sites/default/files/human_1.blend
+
+Author:
+FreeLikeGNU
+License(s):
+CC-BY-SA 3.0
+GPL 3.0
+

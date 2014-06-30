@@ -1,0 +1,31 @@
+gameplay half-crit:
+prevent clicking cont on w to avoid worm sleep
+
+3d non crit:
+
+worm 3d improve:
+worm make it look longer,
+  worm mouth-like thing in front?
+  worm leg-like things at a side?
+  http://lozanox.deviantart.com/art/Sandworm-393676715
+  http://en.wikipedia.org/wiki/Sandworm_%28Dune%29
+wydluzyc anim worma horiz/vert
+
+wide 2nd noise for bg mountains?
+
+------------------------------------------------------------------------------
+not critical:
+
+fade out to red?
+  ev. fade out to dark red * 0.2?
+
+initial screen to config game
+restarting game
+
+right/left handed btm
+
+shaders=srAlways optional
+
+anim smoothing in engine would help player and worm anims logic
+
+tcamera.currentmove to read if player moves, instead of curr looking is something related pressed

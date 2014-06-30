@@ -1,0 +1,142 @@
+#X3D V3.2 utf8
+PROFILE Interchange
+
+KambiNavigationInfo {
+  type [ "WALK", "ANY" ]
+#  avatarSize [ 0.3 0.8 ]
+  speed 3
+  headlight FALSE
+}
+
+# Camera settings "encoded" in the VRML/X3D declaration below :
+# direction 0.99242532253265381 -1.5445813517089846E-9 0.12285012006759644
+# up -4.1612722156969539E-8 1 -7.0760712844730733E-9
+# gravityUp 0 1 0
+DEF View Viewpoint {
+  position -57.830543518066406 3.2180182933807373 1.7566410303115845
+  orientation -1.5563702548959668E-9 -0.99999994039535522 0 1.6939575672149658
+}
+
+DirectionalLight {
+  direction 0 -1 0
+  color 1 0.1 0.1
+}
+
+DEF PointLightOverPlayer PointLight {
+  color 1 1 0
+#  radius 6
+  attenuation 1 0.2 0.1
+  intensity 5
+}
+
+Transform {
+  rotation 0 1 0 3.14
+  children Background {
+    backUrl   "skybox/gloomy_bk.png"
+    bottomUrl "skybox/gloomy_dn.png"
+    frontUrl  "skybox/gloomy_ft.png"
+    leftUrl   "skybox/gloomy_lf.png"
+    rightUrl  "skybox/gloomy_rt.png"
+    topUrl    "skybox/gloomy_up.png"
+  }
+}
+
+Group {
+  children [
+    DEF IceEffect Effect {
+      language "GLSL"
+      inputOutput SFVec2f ice_position -6.6 -1
+      inputOutput SFFloat ice_strength 0.0
+      inputOutput SFMatrix4f cameraInverseMatrix
+        1 0 0 0
+        0 1 0 0
+        0 0 1 0
+        0 0 0 1
+      parts EffectPart {
+        type "FRAGMENT"
+        url "data:text/plain,
+uniform vec2 ice_position;
+uniform float ice_strength;
+uniform mat4 cameraInverseMatrix;
+
+varying vec4 castle_vertex_eye;
+
+/* routines to convert rgb<->hsv from http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl */
+
+vec3 rgb2hsv(vec3 c)
+{
+  vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+  //vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+  //vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+  vec4 p = c.g < c.b ? vec4(c.bg, K.wz) : vec4(c.gb, K.xy);
+  vec4 q = c.r < p.x ? vec4(p.xyw, c.r) : vec4(c.r, p.yzx);
+
+  float d = q.x - min(q.w, q.y);
+  float e = 1.0e-10;
+  return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+vec3 hsv2rgb(vec3 c)
+{
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+void PLUG_texture_apply(inout vec4 fragment_color, const in vec3 normal)
+{
+  vec4 vertex_world = cameraInverseMatrix * castle_vertex_eye;
+
+  /* instead of taking normal fragment_color.rgb for hsv, it's better to only include red, this makes nicer shift to pure blue hue */
+  vec3 hsv = rgb2hsv(vec3(fragment_color.r, 0.0, 0.0));
+  hsv.x += 0.55;
+  hsv.z = 1.0 - hsv.z;
+  vec3 fragment_color_ice = hsv2rgb(hsv);
+
+  const float ICE_DISTANCE_MIN = 2.5;
+  const float ICE_DISTANCE_MAX = 10.0;
+  float dist = distance(vertex_world.xz / vertex_world.w, ice_position);
+  dist = smoothstep(ICE_DISTANCE_MIN, ICE_DISTANCE_MAX, dist);
+  fragment_color.rgb = mix(fragment_color.rgb, fragment_color_ice, ice_strength * (1.0 - dist));
+
+//  fragment_color.b = min((fragment_color.b + fragment_color.r + fragment_color.g) / 1.5, 1.0);
+//  fragment_color.r = min(fragment_color.r, 0.1);
+//  fragment_color.g = min(fragment_color.g, 0.1);
+}"
+      }
+    }
+
+    DEF LavaShape Shape {
+      appearance Appearance {
+        material Material { specularColor 0 0 0 }
+        texture MovieTexture {
+          url "lava_movie_output/seamless_movie/output@counter(4).png"
+          #url "lava_movie_output/seamless_movie/output0001.png" # just for quick test
+          loop TRUE
+        }
+        textureTransform TextureTransform { scale 100 100 }
+      }
+      geometry DEF Lava IndexedFaceSet {
+        solid FALSE
+        texCoord TextureCoordinate {
+          point [
+            0 0,
+            0 1,
+            1 1,
+            1 0 ] }
+        creaseAngle 0
+        coord Coordinate {
+          point [
+            -1000 0 -1000,
+            -1000 0  1000,
+             1000 0  1000,
+             1000 0 -1000 ] }
+        coordIndex [ 3 2 1 0 ]
+      }
+    }
+  ]
+}
+
+ROUTE View.cameraInverseMatrix TO IceEffect.cameraInverseMatrix
+
+Inline { url "level1.x3d" }

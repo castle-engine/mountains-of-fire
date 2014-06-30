@@ -1,0 +1,25 @@
+alone.wav from
+http://opengameart.org/content/alone
+Author:
+Sudocolon
+License(s):
+CC0
+(converted to wav)
+
+impactsplat*
+http://opengameart.org/content/8-wet-squish-slurp-impacts
+Author:
+Independent.nu
+License(s):
+CC0
+(converted to wav and mono, for 3D spatialized sound)
+
+jute-dh-steps/
+http://opengameart.org/content/foot-walking-step-sounds-on-stone-water-snow-wood-and-dirt
+Author:
+Jute
+(Submitted by qubodup)
+License(s):
+GPL 3.0
+GPL 2.0
+(converted to mono, for 3D spatialized sound)

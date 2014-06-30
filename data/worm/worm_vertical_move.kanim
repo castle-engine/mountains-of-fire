@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<animation>
+  <frame url="worm_vertical_move_0001.x3d.gz" time="0.000000" />
+  <frame url="worm_vertical_move_0006.x3d.gz" time="0.200000" />
+  <frame url="worm_vertical_move_0011.x3d.gz" time="0.400000" />
+  <frame url="worm_vertical_move_0016.x3d.gz" time="0.600000" />
+  <frame url="worm_vertical_move_0021.x3d.gz" time="0.800000" />
+  <frame url="worm_vertical_move_0026.x3d.gz" time="1.000000" />
+  <frame url="worm_vertical_move_0031.x3d.gz" time="1.200000" />
+  <frame url="worm_vertical_move_0036.x3d.gz" time="1.400000" />
+  <frame url="worm_vertical_move_0041.x3d.gz" time="1.600000" />
+  <frame url="worm_vertical_move_0046.x3d.gz" time="1.800000" />
+  <frame url="worm_vertical_move_0050.x3d.gz" time="1.960000" />
+</animation>

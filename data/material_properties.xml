@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<properties>
+  <property texture_base_name="bone_warts-1024_contrast"
+    normal_map="worm/textures/bone_warts-1024_contrast_normalmap.png" />
+
+  <property texture_base_name="Pillar_02" footsteps_sound="footsteps_wood" />
+  <property texture_base_name="Planks_02" footsteps_sound="footsteps_wood" />
+  <property texture_base_name="Cobblestone" footsteps_sound="footsteps_dirt" />
+  <property texture_base_name="output@counter(4)" footsteps_sound="footsteps_lava" />
+  <property texture_base_name="output0001" footsteps_sound="footsteps_lava" />
+</properties>

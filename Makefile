@@ -14,7 +14,7 @@ standalone:
 	@echo 'Target OS detected: "'$(TARGET_OS)'"'
 	@echo 'Target OS exe extension detected: "'$(EXE_EXTENSION)'"'
 	@echo 'Using castle_game_engine in directory: ' $(CASTLE_ENGINE_PATH)
-	fpc $(FPC_OPTIONS) $(shell $(CASTLE_ENGINE_PATH)castle_game_engine/scripts/castle_engine_fpc_options) code/mountains_of_fire.lpr
+	fpc $(FPC_OPTIONS) $(shell $(CASTLE_ENGINE_PATH)castle_game_engine/tools/castle_engine_fpc_options) code/mountains_of_fire.lpr
 	mv code/mountains_of_fire$(EXE_EXTENSION) .
 
 .PHONY: clean

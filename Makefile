@@ -29,25 +29,10 @@ clean:
 	$(MAKE) -C $(CASTLE_ENGINE_PATH)castle_game_engine/ clean
 #	$(MAKE) -C android/ clean
 
-#FILES := --exclude *.xcf --exclude '*.blend*' README.txt --exclude seamless2d data/
-# Hack since zip doesn't handle --exclude ?
-FILES := README.txt data/
-WINDOWS_FILES := $(FILES) mountains_of_fire.exe $(CASTLE_ENGINE_PATH)/www/pack/win32_dlls/*.dll
-UNIX_FILES    := $(FILES) mountains_of_fire
-
-.PHONY: clean-for-release
-clean-for-release:
-# Hack: remove not wanted stuff
-	rm -Rf data/level1/lava_movie_output/output*.png \
-	       data/level1/lava_movie_output/seamless2d/
-	find '(' -iname '*.xcf' -or -iname '*.blend*' ')' -exec rm -f '{}' ';'
-
 .PHONY: release-win32
-release-win32: clean standalone clean-for-release
-	rm -Rf mountains_of_fire-win32.zip
-	zip -r mountains_of_fire-win32.zip $(WINDOWS_FILES)
+release-win32: clean standalone
+	castle-engine package --os=win32 --cpu=i386
 
 .PHONY: release-linux
-release-linux: clean standalone clean-for-release
-	rm -Rf mountains_of_fire-linux-i386.tar.gz
-	tar czvf mountains_of_fire-linux-i386.tar.gz $(UNIX_FILES)
+release-linux: clean standalone
+	castle-engine package --os=linux --cpu=i386

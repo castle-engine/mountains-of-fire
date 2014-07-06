@@ -19,15 +19,7 @@ standalone:
 
 .PHONY: clean
 clean:
-	rm -Rf \
-	       mountains_of_fire      mountains_of_fire.exe \
-	  code/mountains_of_fire code/mountains_of_fire.exe \
-	  code/libmountains_of_fire_android.so \
-	  code/mountains_of_fire.compiled \
-	  code/*.ppu code/build/
-	find data/ -iname '*~' -exec rm -f '{}' ';'
-	$(MAKE) -C $(CASTLE_ENGINE_PATH)castle_game_engine/ clean
-#	$(MAKE) -C android/ clean
+	castle-engine clean --verbose
 
 .PHONY: release-win32
 release-win32: clean standalone

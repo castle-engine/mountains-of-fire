@@ -344,6 +344,7 @@ begin
   ViewportRight.Left := ViewportLeft.Width + ViewportsMargin;
   ViewportRight.Bottom := 0;
 
+  WormIntroLabel.MaxWidth := ViewportWorm.Width;
   WormIntroLabel.AlignHorizontal;
   { center horizontally within ViewportWorm }
   if RightHanded then

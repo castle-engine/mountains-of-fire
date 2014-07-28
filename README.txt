@@ -69,6 +69,10 @@ Compiling:
 - Set the environment variable $CASTLE_ENGINE_PATH to the directory that contains
   (as a child) castle_game_engine/ directory.
 
+  Or make sure that compiled engine unis are in ~/.fpc.cfg,
+  see https://sourceforge.net/p/castle-engine/wiki/Build%20tool/
+  for more info about using the build tool.
+
 - Compile by simple "make" in this directory.
 
 Michalis Kamburelis

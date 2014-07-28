@@ -117,7 +117,7 @@ void PLUG_texture_apply(inout vec4 fragment_color, const in vec3 normal)
         textureTransform TextureTransform { scale 100 100 }
       }
       geometry DEF Lava IndexedFaceSet {
-        solid FALSE
+        solid TRUE
         texCoord TextureCoordinate {
           point [
             0 0,
@@ -131,7 +131,7 @@ void PLUG_texture_apply(inout vec4 fragment_color, const in vec3 normal)
             -1000 0  1000,
              1000 0  1000,
              1000 0 -1000 ] }
-        coordIndex [ 3 2 1 0 ]
+        coordIndex [ 0 1 2 3 ]
       }
     }
   ]

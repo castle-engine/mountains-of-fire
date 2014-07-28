@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="mountains_of_fire"
   standalone_source="code/mountains_of_fire.lpr">
+  <version executable_option="--version" />
   <package>
     <include path="README.txt" />
     <exclude path="data/level1/lava_movie_output/output????.png" />

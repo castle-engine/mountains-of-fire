@@ -29,6 +29,7 @@ var
   SceneManager: TMySceneManager;
 
   RightHanded: boolean = true;
+  DebugSpeed: boolean = false;
 
 implementation
 
@@ -174,6 +175,9 @@ begin
 
   SceneManager.LoadLevel('mountains');
   SetAttributes(SceneManager.MainScene.Attributes);
+
+  if DebugSpeed then
+    Player.Camera.MoveSpeed := 10;
 
   PointLightOverPlayer := SceneManager.MainScene.RootNode.FindNodeByName(
     TPointLightNode, 'PointLightOverPlayer', false) as TPointLightNode;

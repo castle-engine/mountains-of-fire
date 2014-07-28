@@ -56,6 +56,8 @@ Command-line options:
 - Sound options, like --no-sound:
   http://castle-engine.sourceforge.net/openal.php#section_options
 
+- --debug-log, --debug-speed
+
 ------------------------------------------------------------------------------
 Compiling:
 

@@ -17,14 +17,16 @@
 
 { "Mountains Of Fire" standalone game binary. }
 program mountains_of_fire;
-uses CastleWindow, CastleConfig, CastleParameters, CastleLog, CastleUtils, CastleSoundEngine,
+uses CastleWindow, CastleConfig, CastleParameters, CastleLog, CastleUtils,
+  CastleSoundEngine,
   Game, GameWindow;
 
 const
-  Options: array [0..1] of TOption =
+  Options: array [0..2] of TOption =
   (
     (Short:  #0; Long: 'debug-log'; Argument: oaNone),
-    (Short:  #0; Long: 'left-handed'; Argument: oaNone)
+    (Short:  #0; Long: 'left-handed'; Argument: oaNone),
+    (Short:  #0; Long: 'debug-speed'; Argument: oaNone)
   );
 
 procedure OptionProc(OptionNum: Integer; HasArgument: boolean;
@@ -33,6 +35,7 @@ begin
   case OptionNum of
     0: InitializeLog;
     1: RightHanded := false;
+    2: DebugSpeed := true;
     else raise EInternalError.Create('OptionProc');
   end;
 end;

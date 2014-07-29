@@ -19,7 +19,7 @@
 program mountains_of_fire;
 uses CastleWindow, CastleConfig, CastleParameters, CastleLog, CastleUtils,
   CastleSoundEngine, CastleClassUtils,
-  Game, GameWindow;
+  Game, GamePlay, GameWindow;
 
 const
   Version = '1.0.1';

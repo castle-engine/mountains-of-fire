@@ -19,4 +19,4 @@ release-linux:
 
 .PHONY: release-src
 release-src:
-	castle-engine package-source --verbose
+	castle-engine package-source

@@ -6,7 +6,7 @@
   number="1"
   type="Level1"
   placeholders="blender"
-  loading_image="skybox/gloomy_preview.jpg"
+  loading_image="splash.png"
   music_sound="music"
 >
 </level>

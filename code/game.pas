@@ -59,7 +59,7 @@ begin
   Resources.LoadFromFiles;
   Levels.LoadFromFiles;
 
-  Progress.UserInterface.Image := LoadImage(ApplicationData('level1/skybox/gloomy_preview.jpg'), [TRGBImage]) as TRGBImage;
+  Progress.UserInterface.Image := LoadImage(ApplicationData('level1/splash.png'), [TRGBImage]) as TRGBImage;
   Progress.UserInterface.OwnsImage := true;
 end;
 

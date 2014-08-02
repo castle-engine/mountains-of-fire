@@ -22,7 +22,7 @@ uses CastleWindow, CastleConfig, CastleParameters, CastleLog, CastleUtils,
   Game, GamePlay, GameWindow;
 
 const
-  Version = '1.0.1';
+  Version = '1.1.0';
   Options: array [0..3] of TOption =
   (
     (Short:  #0; Long: 'debug-log'; Argument: oaNone),

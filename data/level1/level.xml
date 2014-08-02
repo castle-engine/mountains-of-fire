@@ -4,7 +4,7 @@
   scene="level1.x3dv"
   title="Mountains"
   number="1"
-  type="Level"
+  type="Level1"
   placeholders="blender"
   loading_image="skybox/gloomy_preview.jpg"
   music_sound="music"

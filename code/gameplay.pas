@@ -13,7 +13,7 @@
   ----------------------------------------------------------------------------
 }
 
-{ Game playing (as opposed to game options screen). }
+{ Game playing (as opposed to game options screen, that may be added in the future). }
 unit GamePlay;
 
 interface
@@ -49,7 +49,8 @@ uses SysUtils,
   CastleShapes, CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
   X3DNodes, X3DFields, X3DTriangles, X3DCameraUtils,
-  Game3D, GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer;
+  Game3D, GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer,
+  GameButtons;
 
 const
   LavaLifeLossSpeed = 5.0;
@@ -67,29 +68,32 @@ begin
   Player3rdPerson.Enable;
 end;
 
-{ Make sure to free and clear all stuff started during the game. }
-procedure GameEnd;
-begin
-  { free 3D stuff (inside SceneManager) }
-  FreeAndNil(Player);
-  FreeAndNil(Player3rdPerson);
-  FreeAndNil(Worm);
-
-  { free 2D stuff (including SceneManager and viewports) }
-  FreeAndNil(SceneManager);
-  ViewportPlayer := nil; // this is equal to SceneManager, so already freed
-  FreeAndNil(ViewportWorm);
-  FreeAndNil(PlayerHud);
-  FreeAndNil(WormHud);
-  FreeAndNil(WormIntroLabel);
-  FreeAndNil(WormLifeLabel);
-
-  PointLightOverPlayer := nil; // already freed when freeing SceneManager
-  IceEffect := nil; // already freed when freeing SceneManager
-  GameWin := false;
-end;
-
 procedure GameBegin;
+
+  { Make sure to free and clear all stuff started during the game. }
+  procedure GameEnd;
+  begin
+    { free 3D stuff (inside SceneManager) }
+    FreeAndNil(Player);
+    FreeAndNil(Player3rdPerson);
+    FreeAndNil(Worm);
+
+    { free 2D stuff (including SceneManager and viewports) }
+    FreeAndNil(SceneManager);
+    ViewportPlayer := nil; // this is equal to SceneManager, so already freed
+    FreeAndNil(ViewportWorm);
+    FreeAndNil(PlayerHud);
+    FreeAndNil(WormHud);
+    FreeAndNil(WormIntroLabel);
+    FreeAndNil(WormLifeLabel);
+
+    PointLightOverPlayer := nil; // already freed when freeing SceneManager
+    IceEffect := nil; // already freed when freeing SceneManager
+    GameWin := false;
+
+    ButtonsRemove;
+  end;
+
 begin
   GameEnd;
 
@@ -187,6 +191,11 @@ begin
   ViewportWorm.Exists := false;
   WormHud.Exists := false;
   WormIntroLabel.Exists := true;
+
+  ButtonsAdd;
+
+  { initial resize to set size of everything }
+  GameResize(Window.Container);
 end;
 
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
@@ -264,6 +273,7 @@ var
   Dist: Single;
   IcePosition, PlayerPositionXZ: TVector2Single;
   IceStrength, LifeLoss: Single;
+  GameEndButtons: boolean;
 begin
   ViewportPlayer.Camera.GetView(Pos, Dir, Up, GravityUp);
   Up := GravityUp; // make sure that avatar always stands straight on ground
@@ -302,6 +312,12 @@ begin
     Player.Camera.MoveForward := false;
     Player.Camera.MoveBackward := false;
   end;
+
+  GameEndButtons := GameWin or Player.Dead;
+  if GameEndButtons then
+    Player.Camera.MouseLook := false;
+  RestartButton.Exists := GameEndButtons;
+  QuitButton.Exists := GameEndButtons;
 end;
 
 procedure GameResize(Container: TUIContainer);
@@ -346,6 +362,8 @@ begin
     WormLifeLabel.Left := WormLifeLabel.Left - Container.Width div 4 else
     WormLifeLabel.Left := WormLifeLabel.Left + Container.Width div 4;
   WormLifeLabel.AlignVertical(prTop, prTop, -10);
+
+  ButtonsResize;
 end;
 
 end.

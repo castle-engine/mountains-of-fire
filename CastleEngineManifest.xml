@@ -4,6 +4,7 @@
   <version executable_option="--version" />
   <package>
     <include path="README.txt" />
+    <include path="COPYING.GPL2.txt" />
     <exclude path="data/level1/lava_movie_output/output????.png" />
     <exclude path="data/level1/lava_movie_output/seamless2d/*" />
   </package>

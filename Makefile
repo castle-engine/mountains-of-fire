@@ -17,6 +17,10 @@ release-win32:
 release-linux:
 	castle-engine package --os=linux --cpu=i386
 
+.PHONY: release-linux-64
+release-linux-64:
+	castle-engine package --os=linux --cpu=x86_64
+
 .PHONY: release-src
 release-src:
 	castle-engine package-source

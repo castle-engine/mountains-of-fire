@@ -61,10 +61,7 @@ begin
 
   Progress.UserInterface.Image := LoadImage(ApplicationData('level1/splash.png'), [TRGBImage]) as TRGBImage;
   Progress.UserInterface.OwnsImage := true;
-end;
 
-procedure WindowOpen(Container: TUIContainer);
-begin
   GameBegin;
 end;
 
@@ -97,7 +94,6 @@ initialization
 
   { create Window and initialize Window callbacks }
   Window := TCastleWindowCustom.Create(Application);
-  Window.OnOpen := @WindowOpen;
   Window.OnPress := @WindowPress;
   Window.OnUpdate := @WindowUpdate;
   Window.OnResize := @WindowResize;

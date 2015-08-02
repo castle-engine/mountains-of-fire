@@ -1,11 +1,14 @@
-Instructions:
+# Mountains Of Fire
 
-There are 2 playable things: human and sandworm.
-Together, they try to reach a safe place within the mountains flooded with lava.
+Cooperative game where human and worm try to survive in deadly lava world. For single player or 2 players.
 
-The game can be played by 2 players, or by a single player controlling
-both human and sandworm simultaneously.
-The controls were designed to be reachable by a single player.
+The game website is http://castle-engine.sourceforge.net/mountains_of_fire.php . You can also download it from itch.io: http://michaliskambi.itch.io/mountains-of-fire .
+
+## Instructions how to play
+
+There are 2 playable things: human and sandworm. Together, they try to reach a safe place within the mountains flooded with lava.
+
+The game can be played by 2 players, or by a single player controlling both human and sandworm simultaneously. The controls were designed to be reachable by a single player.
 
 - Human views the world in 1st person. It walks over the terrain.
   In right-handed mode, human view is the right one.
@@ -41,8 +44,8 @@ Hints:
 Misc keys:
 - F5 takes a screenshot.
 - Escape exit.
-------------------------------------------------------------------------------
-Command-line options:
+
+## Command-line options:
 
 - --left-handed
   Run the game swapping the split screen order. This is useful if the mouse
@@ -58,13 +61,10 @@ Command-line options:
 
 - --debug-log, --debug-speed
 
-------------------------------------------------------------------------------
-Compiling:
+## Compiling:
 
 - Download Castle Game Engine
   http://castle-engine.sourceforge.net/engine.php
-  For this game, you need the latest SVN version of the engine, so get it by
-    svn checkout http://svn.code.sf.net/p/castle-engine/code/trunk/castle_game_engine
 
 - Set the environment variable $CASTLE_ENGINE_PATH to the directory that contains
   (as a child) castle_game_engine/ directory.
@@ -74,5 +74,11 @@ Compiling:
   for more info about using the build tool.
 
 - Compile by simple "make" in this directory.
+
+## License
+
+GNU GPL >= 2.
+
+## Author
 
 Michalis Kamburelis

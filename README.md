@@ -45,7 +45,7 @@ Misc keys:
 - F5 takes a screenshot.
 - Escape exit.
 
-## Command-line options:
+## Command-line options
 
 - --left-handed
   Run the game swapping the split screen order. This is useful if the mouse
@@ -61,17 +61,17 @@ Misc keys:
 
 - --debug-log, --debug-speed
 
-## Compiling:
+## Compiling
 
 - Download Castle Game Engine
   http://castle-engine.sourceforge.net/engine.php
 
-- Set the environment variable $CASTLE_ENGINE_PATH to the directory that contains
-  (as a child) castle_game_engine/ directory.
+- Install the build tool of Castle Game Engine, see
+  https://sourceforge.net/p/castle-engine/wiki/Build%20tool/ .
 
-  Or make sure that compiled engine unis are in ~/.fpc.cfg,
-  see https://sourceforge.net/p/castle-engine/wiki/Build%20tool/
-  for more info about using the build tool.
+  Basically, you compile a "castle-engine" program, and place it on $PATH.
+  And you set the environment variable $CASTLE_ENGINE_PATH to the directory
+  that contains (as a child) castle_game_engine/ directory.
 
 - Compile by simple "make" in this directory.
 

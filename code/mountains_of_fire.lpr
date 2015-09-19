@@ -45,7 +45,7 @@ begin
     2: DebugSpeed := true;
     3: begin
          WritelnStr(Version);
-         ProgramBreak;
+         Halt;
        end;
     else raise EInternalError.Create('OptionProc');
   end;

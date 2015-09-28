@@ -52,13 +52,14 @@ begin
 end;
 
 begin
-  Config.Load;
+  UserConfig.Load;
+  SoundEngine.LoadFromConfig(UserConfig); // before SoundEngine.ParseParameters
 
-  SoundEngine.ParseParameters; // do this after Config.Load, so command-line overrides config value
+  SoundEngine.ParseParameters;
   Window.FullScreen := true;
   Window.ParseParameters;
   Parameters.Parse(Options, @OptionProc, nil);
 
   Window.OpenAndRun;
-  Config.Save;
+  UserConfig.Save;
 end.

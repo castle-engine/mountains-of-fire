@@ -23,7 +23,7 @@ uses Classes,
   GamePlayer;
 
 type
-  THud = class(TUIRectangularControl)
+  THud = class(TUIControl)
   public
     BarBackground: array [boolean] of TVector4Single;
     BarForeground: array [boolean] of TVector4Single;

@@ -58,7 +58,8 @@ const
 
 var
   PointLightOverPlayer: TPointLightNode;
-  IceEffect: TEffectNode;
+  IcePositionField: TSFVec2f;
+  IceStrengthField: TSFFloat;
 
 procedure TMySceneManager.Render;
 begin
@@ -88,7 +89,8 @@ procedure GameBegin;
     FreeAndNil(WormLifeLabel);
 
     PointLightOverPlayer := nil; // already freed when freeing SceneManager
-    IceEffect := nil; // already freed when freeing SceneManager
+    IcePositionField := nil; // already freed when freeing SceneManager
+    IceStrengthField := nil;
     GameWin := false;
 
     ButtonsRemove;
@@ -182,8 +184,8 @@ begin
   PointLightOverPlayer := SceneManager.MainScene.RootNode.FindNodeByName(
     TPointLightNode, 'PointLightOverPlayer', false) as TPointLightNode;
 
-  IceEffect := SceneManager.MainScene.RootNode.FindNodeByName(
-    TEffectNode, 'IceEffect', false) as TEffectNode;
+  IcePositionField := SceneManager.MainScene.Field('IceEffect', 'ice_position') as TSFVec2f;
+  IceStrengthField := SceneManager.MainScene.Field('IceEffect', 'ice_strength') as TSFFloat;
 
   SceneManager.Items.Add(Worm);
   SceneManager.Items.Add(Player3rdPerson);
@@ -284,8 +286,8 @@ begin
 
   IcePosition := Worm.Position2D;
   IceStrength := Worm.Stationary;
-  (IceEffect.Fields.ByName['ice_position'] as TSFVec2f).Send(IcePosition);
-  (IceEffect.Fields.ByName['ice_strength'] as TSFFloat).Send(IceStrength);
+  IcePositionField.Send(IcePosition);
+  IceStrengthField.Send(IceStrength);
 
   if not Player.Dead then
   begin

@@ -32,7 +32,7 @@ procedure ApplicationInitialize;
 var
   Background: TCastleSimpleBackground;
 begin
-//  OnWarning := @OnWarningWrite;
+//  ApplicationProperties.OnWarning.Add(@ApplicationProperties.WriteWarningOnConsole);
   Progress.UserInterface := WindowProgressInterface;
 
   { do this before loading level and creating TWarm, as they use named sounds }

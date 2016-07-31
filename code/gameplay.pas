@@ -43,7 +43,7 @@ procedure GameResize(Container: TUIContainer);
 implementation
 
 uses SysUtils,
-  CastleWarnings, CastleProgress, CastleWindowProgress, CastleResources,
+  CastleProgress, CastleWindowProgress, CastleResources,
   CastleWindow, CastleVectors, Castle3D,
   CastleRenderer, CastleMaterialProperties, CastleFilesUtils, CastleWindowTouch,
   CastleShapes, CastleUtils, CastleSoundEngine, CastleControls, CastleLog,

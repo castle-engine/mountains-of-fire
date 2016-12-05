@@ -19,7 +19,7 @@ unit GamePlayer3rdPerson;
 interface
 
 uses Classes,
-  Castle3D, CastleCameras, CastlePrecalculatedAnimation, CastleFrustum, CastleVectors;
+  Castle3D, CastleCameras, CastleFrustum, CastleVectors, CastleScene;
 
 type
   TPlayer3rdPerson = class(T3DOrient)
@@ -27,7 +27,7 @@ type
     type
       TAnimationState = (asIdle, {asWalk, }asRun);
     var
-    Anim: array [TAnimationState] of TCastlePrecalculatedAnimation;
+    Anim: array [TAnimationState] of TCastleScene;
     FAnimationState: TAnimationState;
     procedure SetAnimationState(const Value: TAnimationState);
     property AnimationState: TAnimationState read FAnimationState write SetAnimationState;
@@ -43,8 +43,8 @@ var
 implementation
 
 uses Math,
-  CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse, CastleUtils,
-  CastlePlayer,
+  CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse,
+  CastleUtils, CastlePlayer, CastleSceneCore,
   Game3D, GameWindow, GamePlayer;
 
 const
@@ -54,9 +54,10 @@ constructor TPlayer3rdPerson.Create(AOwner: TComponent);
 begin
   inherited;
 
-  Anim[asIdle] := TCastlePrecalculatedAnimation.Create(Self);
-  Anim[asIdle].LoadFromFile(ApplicationData('player/idle.kanim'), false, false, 1);
-  Anim[asIdle].TimeLoop := true;
+  Anim[asIdle] := TCastleScene.Create(Self);
+  Anim[asIdle].Load(ApplicationData('player/idle.kanim'));
+  Anim[asIdle].ProcessEvents := true;
+  Anim[asIdle].PlayAnimation('animation', paForceLooping);
   Anim[asIdle].TimePlayingSpeed := AnimPlayingSpeed;
   SetAttributes(Anim[asIdle].Attributes);
   Add(Anim[asIdle]);
@@ -70,9 +71,10 @@ begin
   Add(Anim[asWalk]);
 }
 
-  Anim[asRun] := TCastlePrecalculatedAnimation.Create(Self);
-  Anim[asRun].LoadFromFile(ApplicationData('player/run.kanim'), false, false, 1);
-  Anim[asRun].TimeLoop := true;
+  Anim[asRun] := TCastleScene.Create(Self);
+  Anim[asRun].Load(ApplicationData('player/run.kanim'));
+  Anim[asRun].ProcessEvents := true;
+  Anim[asRun].PlayAnimation('animation', paForceLooping);
   Anim[asRun].TimePlayingSpeed := AnimPlayingSpeed;
   SetAttributes(Anim[asRun].Attributes);
   Add(Anim[asRun]);

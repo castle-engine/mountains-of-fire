@@ -87,8 +87,9 @@ var
   Badly: boolean;
 begin
   if Player.Dead then
-    GLFadeRectangle(ViewportPlayer.Rect, Red, 1.0) else
-    GLFadeRectangle(ViewportPlayer.Rect, Player.FadeOutColor, Player.FadeOutIntensity);
+    GLFadeRectangleDark(ViewportPlayer.Rect, Red, 1.0)
+  else
+    GLFadeRectangleDark(ViewportPlayer.Rect, Player.FadeOutColor, Player.FadeOutIntensity);
 
   Badly := BadlyHurt(Player.Life, Player.MaxLife);
   R := Rect;
@@ -118,7 +119,7 @@ var
   Badly: boolean;
 begin
   if Worm.Dead then
-    GLFadeRectangle(ViewportWorm.Rect, Red, 1.0);
+    GLFadeRectangleDark(ViewportWorm.Rect, Red, 1.0);
 
   Badly := BadlyHurt(Worm.Life, Worm.MaxLife);
   R := Rect;

@@ -19,8 +19,8 @@ unit GameWorm;
 interface
 
 uses Classes,
-  Castle3D, CastleCameras, CastlePrecalculatedAnimation, CastleFrustum, CastleVectors,
-  CastleSceneManager, CastleSoundEngine, CastleControls;
+  Castle3D, CastleCameras, CastleFrustum, CastleVectors, CastleScene,
+  CastleSceneManager, CastleSoundEngine, CastleControls, CastleTimeUtils;
 
 type
   TWorm = class(T3DOrient)
@@ -28,7 +28,8 @@ type
     type
       TAnimationState = (asIdle, asVertical);
     var
-    Anim: array [TAnimationState] of TCastlePrecalculatedAnimation;
+    Anim: array [TAnimationState] of TCastleScene;
+    AnimationTime: TFloatTime;
     FAnimationState: TAnimationState;
     FStationary: Single;
     CurrentMoveSound: TSound;
@@ -69,11 +70,12 @@ var
 implementation
 
 uses Math,
-  CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse, CastleUtils,
+  CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse,
+  CastleUtils, CastleSceneCore, X3DNodes,
   Game3D, GameWindow, GamePlayer, GameHUD;
 
 const
-  NeutralPoseTolerance = 10;
+  NeutralPoseTolerance = 0.33; // in seconds
   AnimPlayingSpeed = 2;
   WormMoveSpeed = 2;
   CameraMoveSpeed = 1.75; //< should be < WormMoveSpeed to have camera visibly drag behind worm
@@ -92,16 +94,18 @@ constructor TWorm.Create(AOwner: TComponent);
 begin
   inherited;
 
-  Anim[asVertical] := TCastlePrecalculatedAnimation.Create(Self);
-  Anim[asVertical].LoadFromFile(ApplicationData('worm/worm_vertical_move.kanim'), false, false, 1);
-  Anim[asVertical].TimeLoop := true;
+  Anim[asVertical] := TCastleScene.Create(Self);
+  Anim[asVertical].Load(ApplicationData('worm/worm_vertical_move.kanim'));
+  Anim[asVertical].ProcessEvents := true;
+  Anim[asVertical].PlayAnimation('animation', paForceLooping);
   Anim[asVertical].TimePlayingSpeed := AnimPlayingSpeed;
   SetAttributes(Anim[asVertical].Attributes);
   Add(Anim[asVertical]);
 
-  Anim[asIdle] := TCastlePrecalculatedAnimation.Create(Self);
-  Anim[asIdle].LoadFromFile(ApplicationData('worm/worm_idle.kanim'), false, false, 1);
-  Anim[asIdle].TimeLoop := true;
+  Anim[asIdle] := TCastleScene.Create(Self);
+  Anim[asIdle].Load(ApplicationData('worm/worm_idle.kanim'));
+  Anim[asIdle].ProcessEvents := true;
+  Anim[asIdle].PlayAnimation('animation', paForceLooping);
   Anim[asIdle].TimePlayingSpeed := AnimPlayingSpeed;
   SetAttributes(Anim[asIdle].Attributes);
   Add(Anim[asIdle]);
@@ -175,15 +179,10 @@ end;
 
 procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
 
-  function AnimationNeutralPose(const Anim: TCastlePrecalculatedAnimation): boolean;
-  var
-    SceneNumber: Integer;
-    DivResult: SmallInt;
-    ModResult: Word;
+  function AnimationNeutralPose(const Anim: TCastleScene): boolean;
   begin
-    SceneNumber := Floor(MapRange(Anim.Time, Anim.TimeBegin, Anim.TimeEnd, 0, Anim.ScenesCount));
-    DivUnsignedMod(SceneNumber, Anim.ScenesCount, DivResult, ModResult);
-    Result := ModResult < NeutralPoseTolerance;
+    Result := FloatModulo(AnimationTime, Anim.AnimationDuration('animation'))
+      < NeutralPoseTolerance;
   end;
 
   procedure Move(const MoveForward: Single);
@@ -193,7 +192,8 @@ procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
       if AnimationNeutralPose(Anim[asIdle]) then
       begin
         AnimationState := asVertical;
-        Anim[asVertical].ResetTimeAtLoad(true);
+        AnimationTime := 0;
+        Anim[asVertical].PlayAnimation('animation', paForceLooping);
       end else
         Exit; { abort movement, wait for idle anim finish }
     end;
@@ -235,6 +235,8 @@ var
 begin
   inherited;
 
+  AnimationTime += SecondsPassed * AnimPlayingSpeed;
+
   if (not Player.Dead) and (not Dead) and
     { not before "tutorial" finished } ViewportWorm.Exists then
   begin
@@ -252,16 +254,18 @@ begin
   FollowCamera.Walk.Up := MoveCloser(FollowCamera.Walk.Up, Direction, CameraMoveDirectionSpeed, 0.01);
 
   case AnimationState of
-    asVertical  :
-      if not Between(Anim[asVertical].Time, Anim[asVertical].TimeBegin, Anim[asVertical].TimeEnd) then
+    asVertical:
+      if AnimationTime > Anim[asVertical].AnimationDuration('animation') then
       begin
         AnimationState := asIdle;
-        Anim[asIdle].ResetTimeAtLoad(true);
+        AnimationTime := 0;
+        Anim[asIdle].PlayAnimation('animation', paForceLooping);
       end;
   end;
 
   if AnimationState <> asIdle then
-    FStationary := MoveCloser(FStationary, 0.0, StationaryFallSpeed, 0.0) else
+    FStationary := MoveCloser(FStationary, 0.0, StationaryFallSpeed, 0.0)
+  else
     FStationary := MoveCloser(FStationary, 1.0, StationaryRaiseSpeed, 0.0);
 
   { run new move sound, if needed }

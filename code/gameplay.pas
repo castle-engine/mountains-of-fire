@@ -258,7 +258,7 @@ procedure GameUpdate(Container: TUIContainer);
         (Collision.First.Triangle <> nil) and
         (PTriangle(Collision.First.Triangle)^.Shape <> nil) and
         (TShape(PTriangle(Collision.First.Triangle)^.Shape).Node <> nil) and
-        (TShape(PTriangle(Collision.First.Triangle)^.Shape).Node.NodeName = 'LavaShape');
+        (TShape(PTriangle(Collision.First.Triangle)^.Shape).Node.X3DName = 'LavaShape');
       FreeAndNil(Collision);
     finally
       Player.Enable;
@@ -351,19 +351,19 @@ begin
   ViewportRight.Bottom := 0;
 
   WormIntroLabel.MaxWidth := ViewportWorm.Width;
-  WormIntroLabel.AlignHorizontal;
+  WormIntroLabel.Align(hpMiddle, hpMiddle);
   { center horizontally within ViewportWorm }
   if RightHanded then
     WormIntroLabel.Left := WormIntroLabel.Left - Container.Width div 4 else
     WormIntroLabel.Left := WormIntroLabel.Left + Container.Width div 4;
-  WormIntroLabel.AlignVertical;
+  WormIntroLabel.Align(vpMiddle, vpMiddle);
 
-  WormLifeLabel.AlignHorizontal;
+  WormLifeLabel.Align(hpMiddle, hpMiddle);
   { center horizontally within ViewportWorm }
   if RightHanded then
     WormLifeLabel.Left := WormLifeLabel.Left - Container.Width div 4 else
     WormLifeLabel.Left := WormLifeLabel.Left + Container.Width div 4;
-  WormLifeLabel.AlignVertical(prTop, prTop, -10);
+  WormLifeLabel.Align(vpTop, vpTop, -10);
 
   ButtonsResize;
 end;

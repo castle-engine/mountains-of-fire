@@ -82,10 +82,10 @@ procedure ButtonsResize;
 const
   Margin = 16;
 begin
-  RestartButton.AlignHorizontal;
-  RestartButton.AlignVertical(prBottom, prMiddle, Margin div 2);
-  QuitButton.AlignHorizontal;
-  QuitButton.AlignVertical(prTop, prMiddle, -Margin div 2);
+  RestartButton.Align(hpMiddle, hpMiddle);
+  RestartButton.Align(vpBottom, vpMiddle, Margin div 2);
+  QuitButton.Align(hpMiddle, hpMiddle);
+  QuitButton.Align(vpTop, vpMiddle, -Margin div 2);
 end;
 
 end.

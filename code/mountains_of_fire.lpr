@@ -18,9 +18,7 @@
 { "Mountains Of Fire" standalone game binary. }
 program mountains_of_fire;
 
-{$ifdef MSWINDOWS}
-  {$R ../automatic-windows-resources.res}
-{$endif MSWINDOWS}
+{$ifdef MSWINDOWS} {$R automatic-windows-resources.res} {$endif MSWINDOWS}
 
 uses CastleWindow, CastleConfig, CastleParameters, CastleLog, CastleUtils,
   CastleSoundEngine, CastleClassUtils,

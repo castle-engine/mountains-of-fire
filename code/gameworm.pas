@@ -227,7 +227,7 @@ procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
   procedure Rotate(const RotateRight: Single);
   begin
     Direction := RotatePointAroundAxisDeg(RotationSpeed * RotateRight,
-      Direction, Vector3Single(0, -1, 0));
+      Direction, Vector3(0, -1, 0));
   end;
 
 var

@@ -199,6 +199,7 @@ begin
 end;
 
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
+{ $define DEBUG_KEYS}
 {$ifdef DEBUG_KEYS}
 var
   Pos, Dir, Up, GravityUp: TVector3Single;
@@ -209,8 +210,7 @@ begin
   begin
     { debug examine view }
     { make sure camera is TUniversalCamera }
-    SceneManager.Camera := SceneManager.CreateDefaultCamera(SceneManager);
-    (SceneManager.Camera as TUniversalCamera).NavigationType := ntExamine;
+    SceneManager.NavigationType := ntExamine;
   end;
 
   if Event.IsKey(K_F3) then

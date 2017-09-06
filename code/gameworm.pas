@@ -44,7 +44,7 @@ type
       DefaultAltitude = -1;
     var
     { Camera following worm. }
-    FollowCamera: TUniversalCamera;
+    FollowCamera: TWalkCamera;
     Life, MaxLife: Single;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -250,8 +250,8 @@ begin
       Move(-1);
   end;
 
-  FollowCamera.Walk.Position := MoveCloser(FollowCamera.Walk.Position, TargetCameraPosition, CameraMoveSpeed, 0.01);
-  FollowCamera.Walk.Up := MoveCloser(FollowCamera.Walk.Up, Direction, CameraMoveDirectionSpeed, 0.01);
+  FollowCamera.Position := MoveCloser(FollowCamera.Position, TargetCameraPosition, CameraMoveSpeed, 0.01);
+  FollowCamera.Up := MoveCloser(FollowCamera.Up, Direction, CameraMoveDirectionSpeed, 0.01);
 
   case AnimationState of
     asVertical:

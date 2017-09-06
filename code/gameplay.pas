@@ -165,11 +165,9 @@ begin
   Progress.Step;
   Progress.Fini;
 
-  if ViewportWorm.Camera = nil then
-    ViewportWorm.Camera := SceneManager.CreateDefaultCamera(ViewportWorm);
-  Worm.FollowCamera := ViewportWorm.Camera as TUniversalCamera;
-  Worm.FollowCamera.NavigationType := ntWalk;
-  Worm.FollowCamera.Walk.Gravity := false;
+  ViewportWorm.NavigationType := ntWalk;
+  Worm.FollowCamera := ViewportWorm.WalkCamera;
+  Worm.FollowCamera.Gravity := false;
   Worm.FollowCamera.GoToInitial;
   Worm.FollowCamera.Input := [];
   Worm.FollowCamera.Radius := 0.1; // allow near projection plane (calculated based on this radius) be larger

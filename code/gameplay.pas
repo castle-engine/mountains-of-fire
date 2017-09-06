@@ -209,7 +209,6 @@ begin
   if Event.IsKey(K_F2) then
   begin
     { debug examine view }
-    { make sure camera is TUniversalCamera }
     SceneManager.NavigationType := ntExamine;
   end;
 

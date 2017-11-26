@@ -33,7 +33,6 @@ type
     property AnimationState: TAnimationState read FAnimationState write SetAnimationState;
   public
     constructor Create(AOwner: TComponent); override;
-    procedure Render(const Frustum: TFrustum; const Params: TRenderParams); override;
     procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
   end;
 
@@ -91,11 +90,6 @@ begin
   FAnimationState := Value;
   for AnimState in TAnimationState do
     Anim[AnimState].Exists := Value = AnimState;
-end;
-
-procedure TPlayer3rdPerson.Render(const Frustum: TFrustum; const Params: TRenderParams);
-begin
-  inherited;
 end;
 
 procedure TPlayer3rdPerson.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);

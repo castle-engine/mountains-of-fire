@@ -49,7 +49,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure FollowCameraUpdateNow;
-    procedure Render(const Frustum: TFrustum; const Params: TRenderParams); override;
+    procedure LocalRender(const Frustum: TFrustum; const Params: TRenderParams); override;
     // function Press(const Event: TInputPressRelease): boolean; override;
     // function Release(const Event: TInputPressRelease): boolean; override;
     procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
@@ -149,7 +149,7 @@ begin
   );
 end;
 
-procedure TWorm.Render(const Frustum: TFrustum; const Params: TRenderParams);
+procedure TWorm.LocalRender(const Frustum: TFrustum; const Params: TRenderParams);
 begin
   { use similar trick as TPLayer.RenderOnTop to render over the rest }
   if RenderingCamera.Target <> rtShadowMap then

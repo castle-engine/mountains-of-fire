@@ -46,9 +46,9 @@ uses SysUtils, Math,
   CastleProgress, CastleWindowProgress, CastleResources,
   CastleWindow, CastleVectors, Castle3D,
   CastleRenderer, CastleMaterialProperties, CastleFilesUtils, CastleWindowTouch,
-  CastleShapes, CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
+  CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
-  X3DNodes, X3DFields, X3DTriangles, X3DCameraUtils,
+  X3DNodes, X3DFields, X3DTriangles, CastleShapes, X3DCameraUtils,
   Game3D, GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer,
   GameButtons;
 
@@ -253,9 +253,9 @@ procedure GameUpdate(Container: TUIContainer);
       Result :=
         (Collision <> nil) and
         (Collision.First.Triangle <> nil) and
-        (PTriangle(Collision.First.Triangle)^.Shape <> nil) and
-        (TShape(PTriangle(Collision.First.Triangle)^.Shape).Node <> nil) and
-        (TShape(PTriangle(Collision.First.Triangle)^.Shape).Node.X3DName = 'LavaShape');
+        (Collision.First.Triangle^.Shape <> nil) and
+        (Collision.First.Triangle^.Shape.Node <> nil) and
+        (Collision.First.Triangle^.Shape.Node.X3DName = 'LavaShape');
       FreeAndNil(Collision);
     finally
       Player.Enable;

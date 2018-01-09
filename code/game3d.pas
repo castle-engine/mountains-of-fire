@@ -26,7 +26,7 @@ implementation
 
 procedure SetAttributes(const Attributes: TRenderingAttributes);
 begin
-  Attributes.Shaders := srAlways;
+  Attributes.PhongShading := true;
 end;
 
 end.

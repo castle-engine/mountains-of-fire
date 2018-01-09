@@ -19,11 +19,11 @@ unit GameWorm;
 interface
 
 uses Classes,
-  Castle3D, CastleCameras, CastleFrustum, CastleVectors, CastleScene,
+  CastleTransform, CastleCameras, CastleVectors, CastleScene,
   CastleSceneManager, CastleSoundEngine, CastleControls, CastleTimeUtils;
 
 type
-  TWorm = class(T3DOrient)
+  TWorm = class(TCastleTransform)
   private
     type
       TAnimationState = (asIdle, asVertical);
@@ -35,7 +35,7 @@ type
     CurrentMoveSound: TSound;
     MoveSounds: array [0..3] of TSoundType;
     TimeToStationaryLifeLoss: Single;
-    function TargetCameraPosition: TVector3Single;
+    function TargetCameraPosition: TVector3;
     procedure SetAnimationState(const Value: TAnimationState);
     property AnimationState: TAnimationState read FAnimationState write SetAnimationState;
     procedure CurrentMoveSoundRelease(Sender: TSound);
@@ -49,13 +49,13 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure FollowCameraUpdateNow;
-    procedure LocalRender(const Frustum: TFrustum; const Params: TRenderParams); override;
+    procedure LocalRender(const Params: TRenderParams); override;
     // function Press(const Event: TInputPressRelease): boolean; override;
     // function Release(const Event: TInputPressRelease): boolean; override;
     procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
     { How long is worm stationary. }
     property Stationary: Single read FStationary;
-    function Position2D: TVector2Single;
+    function Position2D: TVector2;
     function Dead: boolean;
   end;
 
@@ -117,7 +117,7 @@ begin
   MoveSounds[2] := SoundEngine.SoundFromName('worm_move_2');
   MoveSounds[3] := SoundEngine.SoundFromName('worm_move_3');
 
-  Position := Vector3Single(6.1283283233642578, Worm.DefaultAltitude, 5.9467759132385254); // initial worm position
+  Position := Vector3(6.1283283233642578, Worm.DefaultAltitude, 5.9467759132385254); // initial worm position
 
   MaxLife := 100;
   Life := MaxLife;
@@ -143,20 +143,20 @@ procedure TWorm.FollowCameraUpdateNow;
 begin
   FollowCamera.SetView(
     { position } TargetCameraPosition,
-//    { direction } Vector3Single(0.05, -1, 0.05),
-    { direction } Vector3Single(0, -1, 0),
-    { up } Vector3Single(0, 0, -1), false
+//    { direction } Vector3(0.05, -1, 0.05),
+    { direction } Vector3(0, -1, 0),
+    { up } Vector3(0, 0, -1), false
   );
 end;
 
-procedure TWorm.LocalRender(const Frustum: TFrustum; const Params: TRenderParams);
+procedure TWorm.LocalRender(const Params: TRenderParams);
 begin
   { use similar trick as TPLayer.RenderOnTop to render over the rest }
   if RenderingCamera.Target <> rtShadowMap then
-    DepthRange := drNear;
+    RenderContext.DepthRange := drNear;
   inherited;
   if RenderingCamera.Target <> rtShadowMap then
-    DepthRange := drFar;
+    RenderContext.DepthRange := drFar;
 end;
 
 // function TWorm.Press(const Event: TInputPressRelease): boolean;
@@ -171,7 +171,7 @@ end;
 //   if Result then Exit;
 // end;
 
-function TWorm.TargetCameraPosition: TVector3Single;
+function TWorm.TargetCameraPosition: TVector3;
 begin
   Result := Worm.Position;
   Result[1] := CameraAltitude;
@@ -216,8 +216,8 @@ procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
   end;
 
   { Move Value closer to Destination, but do not overshoot. }
-  function MoveCloser(const Vector, Destination: TVector3Single;
-    const Speed: Single; const EpsilonDistanceToSleep: Single): TVector3Single;
+  function MoveCloser(const Vector, Destination: TVector3;
+    const Speed: Single; const EpsilonDistanceToSleep: Single): TVector3;
   begin
     Result[0] := MoveCloser(Vector[0], Destination[0], Speed, EpsilonDistanceToSleep);
     Result[1] := MoveCloser(Vector[1], Destination[1], Speed, EpsilonDistanceToSleep);
@@ -231,11 +231,11 @@ procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
   end;
 
 var
-  PlayerPositionXZ: TVector2Single;
+  PlayerPositionXZ: TVector2;
 begin
   inherited;
 
-  AnimationTime += SecondsPassed * AnimPlayingSpeed;
+  AnimationTime := AnimationTime + (SecondsPassed * AnimPlayingSpeed);
 
   if (not Player.Dead) and (not Dead) and
     { not before "tutorial" finished } ViewportWorm.Exists then
@@ -280,7 +280,7 @@ begin
   if CurrentMoveSound <> nil then
     CurrentMoveSound.Position := Position;
 
-  PlayerPositionXZ := Vector2Single(Player.Position[0], Player.Position[2]);
+  PlayerPositionXZ := Vector2(Player.Position[0], Player.Position[2]);
   if PointsDistance(PlayerPositionXZ, Position2D) <= DistanceToFinishTutorial then
   begin
     WormIntroLabel.Exists := false;
@@ -298,10 +298,10 @@ begin
     end else
     if TimeToStationaryLifeLoss <= 0 then
     begin
-      Life -= StationaryLifeLossSpeed * SecondsPassed;
+      Life := Life - (StationaryLifeLossSpeed * SecondsPassed);
       WormLifeLabel.Exists := true;
     end else
-      TimeToStationaryLifeLoss -= SecondsPassed
+      TimeToStationaryLifeLoss := TimeToStationaryLifeLoss - SecondsPassed
   end;
 end;
 
@@ -312,9 +312,9 @@ begin
   CurrentMoveSound := nil;
 end;
 
-function TWorm.Position2D: TVector2Single;
+function TWorm.Position2D: TVector2;
 begin
-  Result := Vector2Single(Position[0], Position[2]);
+  Result := Vector2(Position[0], Position[2]);
 end;
 
 function TWorm.Dead: boolean;

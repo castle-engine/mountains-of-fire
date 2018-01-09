@@ -44,7 +44,7 @@ implementation
 
 uses SysUtils, Math,
   CastleProgress, CastleWindowProgress, CastleResources,
-  CastleWindow, CastleVectors, Castle3D,
+  CastleWindow, CastleVectors, CastleTransform,
   CastleRenderer, CastleMaterialProperties, CastleFilesUtils, CastleWindowTouch,
   CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
@@ -202,7 +202,7 @@ procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
 { $define DEBUG_KEYS}
 {$ifdef DEBUG_KEYS}
 var
-  Pos, Dir, Up, GravityUp: TVector3Single;
+  Pos, Dir, Up, GravityUp: TVector3;
 {$endif}
 begin
   {$ifdef DEBUG_KEYS}
@@ -268,9 +268,9 @@ const
   IceDistanceMin = 2.5;
   IceDistanceMax = 10.0;
 var
-  Pos, Dir, Up, GravityUp: TVector3Single;
+  Pos, Dir, Up, GravityUp: TVector3;
   Dist: Single;
-  IcePosition, PlayerPositionXZ: TVector2Single;
+  IcePosition, PlayerPositionXZ: TVector2;
   IceStrength, LifeLoss: Single;
   GameEndButtons: boolean;
 begin
@@ -279,7 +279,7 @@ begin
   MakeVectorsOrthoOnTheirPlane(Dir, Up);
   Player3rdPerson.SetView(Pos, Dir, Up);
 
-  PointLightOverPlayer.FdLocation.Send(Pos + Vector3Single(0, 2, 0));
+  PointLightOverPlayer.FdLocation.Send(Pos + Vector3(0, 2, 0));
 
   IcePosition := Worm.Position2D;
   IceStrength := Worm.Stationary;
@@ -291,18 +291,18 @@ begin
     if PlayerOverLava then
     begin
       { This follows algorithm how we calculate ice visualization in level1.x3dv shader }
-      PlayerPositionXZ := Vector2Single(Player.Position[0], Player.Position[2]);
+      PlayerPositionXZ := Vector2(Player.Position[0], Player.Position[2]);
       Dist := PointsDistance(PlayerPositionXZ, IcePosition);
       Dist := SmoothStep(IceDistanceMin, IceDistanceMax, Dist);
       LifeLoss := 1.0 - Worm.Stationary * (1.0 - Dist);
-      Player.Life := Player.Life - Window.Fps.UpdateSecondsPassed * LavaLifeLossSpeed * LifeLoss;
+      Player.Life := Player.Life - Window.Fps.SecondsPassed * LavaLifeLossSpeed * LifeLoss;
     end else
       LifeLoss := 0;
 
     if LifeLoss = 0 then
     begin
       Player.Life := Min(Player.MaxLife, { do not regenerate over MaxLife }
-        Player.Life + Window.Fps.UpdateSecondsPassed * RegenerateLifeSpeed);
+        Player.Life + Window.Fps.SecondsPassed * RegenerateLifeSpeed);
     end;
   end else
   begin

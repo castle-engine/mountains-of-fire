@@ -19,10 +19,10 @@ unit GamePlayer3rdPerson;
 interface
 
 uses Classes,
-  Castle3D, CastleCameras, CastleFrustum, CastleVectors, CastleScene;
+  CastleTransform, CastleCameras, CastleVectors, CastleScene;
 
 type
-  TPlayer3rdPerson = class(T3DOrient)
+  TPlayer3rdPerson = class(TCastleTransform)
   private
     type
       TAnimationState = (asIdle, {asWalk, }asRun);

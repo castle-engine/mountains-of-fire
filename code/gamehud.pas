@@ -25,8 +25,8 @@ uses Classes,
 type
   THud = class(TUIControl)
   public
-    BarBackground: array [boolean] of TVector4Single;
-    BarForeground: array [boolean] of TVector4Single;
+    BarBackground: array [boolean] of TVector4;
+    BarForeground: array [boolean] of TVector4;
     constructor Create(AOwner: TComponent); override;
     function BadlyHurt(const Life, MaxLife: Single): boolean;
   end;
@@ -61,10 +61,10 @@ const
 constructor THud.Create(AOwner: TComponent);
 begin
   inherited;
-  BarBackground[false] := Vector4Single(0.5, 1.0, 0.5, 0.2); // BadlyHurt = false => greenish
-  BarBackground[true ] := Vector4Single(1.0, 0.5, 0.5, 0.2); // BadlyHurt = true  => reddish
-  BarForeground[false] := Vector4Single(0, 1, 0, 0.9); // BadlyHurt = false => greenish
-  BarForeground[true ] := Vector4Single(1, 0, 0, 0.9); // BadlyHurt = true  => reddish
+  BarBackground[false] := Vector4(0.5, 1.0, 0.5, 0.2); // BadlyHurt = false => greenish
+  BarBackground[true ] := Vector4(1.0, 0.5, 0.5, 0.2); // BadlyHurt = true  => reddish
+  BarForeground[false] := Vector4(0, 1, 0, 0.9); // BadlyHurt = false => greenish
+  BarForeground[true ] := Vector4(1, 0, 0, 0.9); // BadlyHurt = true  => reddish
 end;
 
 function THud.BadlyHurt(const Life, MaxLife: Single): boolean;
@@ -129,7 +129,7 @@ begin
   begin
     NewWidth := Clamped(Round(
       MapRange(Worm.Life, 0, Worm.MaxLife, 0, R.Width)), 0, R.Width);
-    R.Left += (R.Width - NewWidth);
+    R.Left := R.Left + (R.Width - NewWidth);
     R.Width := NewWidth;
     DrawRectangle(R, BarForeground[Badly]);
   end;

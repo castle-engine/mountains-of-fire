@@ -33,13 +33,13 @@ type
 
   TPlayerHud = class(THud)
   public
-    function Rect: TRectangle; override;
+    function Rect: TFloatRectangle; override;
     procedure Render; override;
   end;
 
   TWormHud = class(THud)
   public
-    function Rect: TRectangle; override;
+    function Rect: TFloatRectangle; override;
     procedure Render; override;
   end;
 
@@ -74,7 +74,7 @@ end;
 
 { TPlayerHud ----------------------------------------------------------------- }
 
-function TPlayerHud.Rect: TRectangle;
+function TPlayerHud.Rect: TFloatRectangle;
 begin
   { horizontal bar, good for both left and right-handed }
   Result := ViewportPlayer.Rect.Grow(-UIMargin);
@@ -83,7 +83,7 @@ end;
 
 procedure TPlayerHud.Render;
 var
-  R: TRectangle;
+  R: TFloatRectangle;
   Badly: boolean;
 begin
   if Player.Dead then
@@ -92,7 +92,7 @@ begin
     GLFadeRectangleDark(ViewportPlayer.Rect, Player.FadeOutColor, Player.FadeOutIntensity);
 
   Badly := BadlyHurt(Player.Life, Player.MaxLife);
-  R := Rect;
+  R := RenderRect;
   DrawRectangle(R, BarBackground[Badly]);
   R := R.Grow(-2);
   if not Player.Dead then
@@ -105,7 +105,7 @@ end;
 
 { TWormHud ------------------------------------------------------------------- }
 
-function TWormHud.Rect: TRectangle;
+function TWormHud.Rect: TFloatRectangle;
 begin
   { horizontal bar, good for both left and right-handed }
   Result := ViewportWorm.Rect.Grow(-UIMargin);
@@ -114,21 +114,21 @@ end;
 
 procedure TWormHud.Render;
 var
-  R: TRectangle;
-  NewWidth: Integer;
+  R: TFloatRectangle;
+  NewWidth: Single;
   Badly: boolean;
 begin
   if Worm.Dead then
     GLFadeRectangleDark(ViewportWorm.Rect, Red, 1.0);
 
   Badly := BadlyHurt(Worm.Life, Worm.MaxLife);
-  R := Rect;
+  R := RenderRect;
   DrawRectangle(R, BarBackground[Badly]);
   R := R.Grow(-2);
   if not Worm.Dead then
   begin
-    NewWidth := Clamped(Round(
-      MapRange(Worm.Life, 0, Worm.MaxLife, 0, R.Width)), 0, R.Width);
+    NewWidth := Clamped(
+      MapRange(Worm.Life, 0, Worm.MaxLife, 0, R.Width), 0, R.Width);
     R.Left := R.Left + (R.Width - NewWidth);
     R.Width := NewWidth;
     DrawRectangle(R, BarForeground[Badly]);

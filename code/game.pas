@@ -36,13 +36,13 @@ begin
   Progress.UserInterface := WindowProgressInterface;
 
   { do this before loading level and creating TWarm, as they use named sounds }
-  SoundEngine.RepositoryURL := ApplicationData('sounds/index.xml');
+  SoundEngine.RepositoryURL := 'castle-data:/sounds/index.xml';
   SoundEngine.MusicPlayer.MusicVolume := 0.5;
 
-  MaterialProperties.URL := ApplicationData('material_properties.xml');
+  MaterialProperties.URL := 'castle-data:/material_properties.xml';
 
-  PlayerInput_LeftRot.MakeClear(true);
-  PlayerInput_RightRot.MakeClear(true);
+  PlayerInput_LeftRotate.MakeClear(true);
+  PlayerInput_RightRotate.MakeClear(true);
   PlayerInput_LeftStrafe.MakeClear(true);
   PlayerInput_RightStrafe.MakeClear(true);
   //PlayerInput_Forward.Assign(K_None, K_None, #0, true, mbLeft, mwUp);
@@ -53,13 +53,13 @@ begin
   PlayerInput_Crouch.MakeClear(true);
 
   Background := TCastleSimpleBackground.Create(Window);
-  Background.Color := Vector4Single(0.1, 0, 0, 1);
+  Background.Color := Vector4(0.1, 0, 0, 1);
   Window.Controls.InsertBack(Background);
 
   Resources.LoadFromFiles;
   Levels.LoadFromFiles;
 
-  Progress.UserInterface.Image := LoadImage(ApplicationData('level1/splash.png'), [TRGBImage]) as TRGBImage;
+  Progress.UserInterface.Image := LoadImage('castle-data:/level1/splash.png', [TRGBImage]) as TRGBImage;
   Progress.UserInterface.OwnsImage := true;
 
   GameBegin;
@@ -93,7 +93,7 @@ initialization
   Application.OnInitialize := @ApplicationInitialize;
 
   { create Window and initialize Window callbacks }
-  Window := TCastleWindowCustom.Create(Application);
+  Window := TCastleWindowBase.Create(Application);
   Window.OnPress := @WindowPress;
   Window.OnUpdate := @WindowUpdate;
   Window.OnResize := @WindowResize;

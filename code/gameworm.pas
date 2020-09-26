@@ -71,7 +71,7 @@ implementation
 
 uses Math,
   CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse,
-  CastleUtils, CastleSceneCore, X3DNodes,
+  CastleUtils, CastleSceneCore, X3DNodes, CastleRenderContext,
   Game3D, GameWindow, GamePlayer, GameHUD;
 
 const

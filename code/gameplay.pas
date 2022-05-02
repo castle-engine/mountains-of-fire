@@ -1,5 +1,5 @@
 {
-  Copyright 2014-2017 Michalis Kamburelis.
+  Copyright 2014-2022 Michalis Kamburelis.
 
   This file is part of "Mountains Of Fire".
 
@@ -45,10 +45,10 @@ implementation
 uses SysUtils, Math,
   CastleProgress, CastleWindowProgress, CastleResources,
   CastleWindow, CastleVectors, CastleTransform,
-  CastleRenderer, CastleMaterialProperties, CastleFilesUtils, CastleWindowTouch,
+  CastleRenderer, CastleMaterialProperties, CastleFilesUtils,
   CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
-  X3DNodes, X3DFields, X3DTriangles, CastleShapes, X3DCameraUtils,
+  X3DNodes, X3DFields, CastleShapes, X3DCameraUtils,
   Game3D, GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer,
   GameButtons;
 
@@ -62,11 +62,14 @@ var
   IceStrengthField: TSFFloat;
 
 procedure TMySceneManager.Render;
+var
+  SavedExists: Boolean;
 begin
   { Player3rdPerson is visible only in WormViewport }
-  Player3rdPerson.Disable;
+  SavedExists := Player3rdPerson.Exists;
+  Player3rdPerson.Exists := false;
   inherited;
-  Player3rdPerson.Enable;
+  Player3rdPerson.Exists := SavedExists;
 end;
 
 procedure GameBegin;
@@ -166,12 +169,12 @@ begin
   Progress.Fini;
 
   ViewportWorm.NavigationType := ntWalk;
-  Worm.FollowCamera := ViewportWorm.WalkCamera;
-  Worm.FollowCamera.Gravity := false;
-  Worm.FollowCamera.GoToInitial;
-  Worm.FollowCamera.Input := [];
-  Worm.FollowCamera.Radius := 0.1; // allow near projection plane (calculated based on this radius) be larger
-  Worm.FollowCameraUpdateNow;
+  Worm.FollowNav := ViewportWorm.WalkCamera;
+  Worm.FollowNav.Gravity := false;
+  //Worm.FollowNav.GoToInitial; // TODO -- need to do anything?
+  Worm.FollowNav.Input := [];
+  Worm.FollowNav.Radius := 0.1; // allow near projection plane (calculated based on this radius) be larger
+  Worm.FollowNavUpdateNow;
 
   SceneManager.LoadLevel('mountains');
   SetAttributes(SceneManager.MainScene.Attributes);
@@ -245,9 +248,12 @@ procedure GameUpdate(Container: TUIContainer);
   function PlayerOverLava: boolean;
   var
     Collision: TRayCollision;
+    SavedPlayerExists, SavedPlayer3rdPersonExists: Boolean;
   begin
-    Player.Disable;
-    Player3rdPerson.Disable;
+    SavedPlayerExists := Player.Exists;
+    SavedPlayer3rdPersonExists := Player3rdPerson.Exists;
+    Player.Exists := false;
+    Player3rdPerson.Exists := false;
     try
       Collision := SceneManager.Items.WorldRay(Player.Position, -SceneManager.GravityUp);
       Result :=
@@ -258,8 +264,8 @@ procedure GameUpdate(Container: TUIContainer);
         (Collision.First.Triangle^.Shape.Node.X3DName = 'LavaShape');
       FreeAndNil(Collision);
     finally
-      Player.Enable;
-      Player3rdPerson.Enable;
+      Player.Exists := SavedPlayerExists;
+      Player3rdPerson.Exists := SavedPlayer3rdPersonExists;
     end;
   end;
 
@@ -274,7 +280,8 @@ var
   IceStrength, LifeLoss: Single;
   GameEndButtons: boolean;
 begin
-  ViewportPlayer.Camera.GetView(Pos, Dir, Up, GravityUp);
+  ViewportPlayer.Camera.GetView(Pos, Dir, Up);
+  GravityUp := ViewportPlayer.Camera.GravityUp;
   Up := GravityUp; // make sure that avatar always stands straight on ground
   MakeVectorsOrthoOnTheirPlane(Dir, Up);
   Player3rdPerson.SetView(Pos, Dir, Up);

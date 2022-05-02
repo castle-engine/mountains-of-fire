@@ -1,5 +1,5 @@
 {
-  Copyright 2014-2017 Michalis Kamburelis.
+  Copyright 2014-2022 Michalis Kamburelis.
 
   This file is part of "Mountains Of Fire".
 
@@ -44,12 +44,12 @@ type
       DefaultAltitude = -1;
     var
     { Camera following worm. }
-    FollowCamera: TWalkCamera;
+    FollowNav: TCastleWalkNavigation;
     Life, MaxLife: Single;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure FollowCameraUpdateNow;
-    procedure LocalRender(const Params: TRenderParams); override;
+    procedure FollowNavUpdateNow;
+    procedure LocalRender(const RenderParams: TRenderParams); override;
     // function Press(const Event: TInputPressRelease): boolean; override;
     // function Release(const Event: TInputPressRelease): boolean; override;
     procedure Update(const SecondsPassed: Single; var RemoveMe: TRemoveType); override;
@@ -70,7 +70,7 @@ var
 implementation
 
 uses Math,
-  CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse,
+  CastleFilesUtils, CastleGLUtils, CastleKeysMouse,
   CastleUtils, CastleSceneCore, X3DNodes, CastleRenderContext,
   Game3D, GameWindow, GamePlayer, GameHUD;
 
@@ -95,17 +95,17 @@ begin
   inherited;
 
   Anim[asVertical] := TCastleScene.Create(Self);
-  Anim[asVertical].Load(ApplicationData('worm/worm_vertical_move.kanim'));
+  Anim[asVertical].Load('castle-data:/worm/worm_vertical_move.kanim');
   Anim[asVertical].ProcessEvents := true;
-  Anim[asVertical].PlayAnimation('animation', paForceLooping);
+  Anim[asVertical].PlayAnimation('animation', true);
   Anim[asVertical].TimePlayingSpeed := AnimPlayingSpeed;
   SetAttributes(Anim[asVertical].Attributes);
   Add(Anim[asVertical]);
 
   Anim[asIdle] := TCastleScene.Create(Self);
-  Anim[asIdle].Load(ApplicationData('worm/worm_idle.kanim'));
+  Anim[asIdle].Load('castle-data:/worm/worm_idle.kanim');
   Anim[asIdle].ProcessEvents := true;
-  Anim[asIdle].PlayAnimation('animation', paForceLooping);
+  Anim[asIdle].PlayAnimation('animation', true);
   Anim[asIdle].TimePlayingSpeed := AnimPlayingSpeed;
   SetAttributes(Anim[asIdle].Attributes);
   Add(Anim[asIdle]);
@@ -139,9 +139,9 @@ begin
     Anim[AnimState].Exists := Value = AnimState;
 end;
 
-procedure TWorm.FollowCameraUpdateNow;
+procedure TWorm.FollowNavUpdateNow;
 begin
-  FollowCamera.SetView(
+  FollowNav.Camera.SetView(
     { position } TargetCameraPosition,
 //    { direction } Vector3(0.05, -1, 0.05),
     { direction } Vector3(0, -1, 0),
@@ -149,13 +149,13 @@ begin
   );
 end;
 
-procedure TWorm.LocalRender(const Params: TRenderParams);
+procedure TWorm.LocalRender(const RenderParams: TRenderParams);
 begin
   { use similar trick as TPLayer.RenderOnTop to render over the rest }
-  if RenderingCamera.Target <> rtShadowMap then
+  if RenderParams.RenderingCamera.Target <> rtShadowMap then
     RenderContext.DepthRange := drNear;
   inherited;
-  if RenderingCamera.Target <> rtShadowMap then
+  if RenderParams.RenderingCamera.Target <> rtShadowMap then
     RenderContext.DepthRange := drFar;
 end;
 
@@ -174,7 +174,7 @@ end;
 function TWorm.TargetCameraPosition: TVector3;
 begin
   Result := Worm.Position;
-  Result[1] := CameraAltitude;
+  Result.Y := CameraAltitude;
 end;
 
 procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
@@ -193,7 +193,7 @@ procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
       begin
         AnimationState := asVertical;
         AnimationTime := 0;
-        Anim[asVertical].PlayAnimation('animation', paForceLooping);
+        Anim[asVertical].PlayAnimation('animation', true);
       end else
         Exit; { abort movement, wait for idle anim finish }
     end;
@@ -219,9 +219,9 @@ procedure TWorm.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
   function MoveCloser(const Vector, Destination: TVector3;
     const Speed: Single; const EpsilonDistanceToSleep: Single): TVector3;
   begin
-    Result[0] := MoveCloser(Vector[0], Destination[0], Speed, EpsilonDistanceToSleep);
-    Result[1] := MoveCloser(Vector[1], Destination[1], Speed, EpsilonDistanceToSleep);
-    Result[2] := MoveCloser(Vector[2], Destination[2], Speed, EpsilonDistanceToSleep);
+    Result.X := MoveCloser(Vector.X, Destination.X, Speed, EpsilonDistanceToSleep);
+    Result.Y := MoveCloser(Vector.Y, Destination.Y, Speed, EpsilonDistanceToSleep);
+    Result.Z := MoveCloser(Vector.Z, Destination.Z, Speed, EpsilonDistanceToSleep);
   end;
 
   procedure Rotate(const RotateRight: Single);
@@ -250,8 +250,8 @@ begin
       Move(-1);
   end;
 
-  FollowCamera.Position := MoveCloser(FollowCamera.Position, TargetCameraPosition, CameraMoveSpeed, 0.01);
-  FollowCamera.Up := MoveCloser(FollowCamera.Up, Direction, CameraMoveDirectionSpeed, 0.01);
+  FollowNav.Camera.Translation := MoveCloser(FollowNav.Camera.Translation, TargetCameraPosition, CameraMoveSpeed, 0.01);
+  FollowNav.Camera.Up          := MoveCloser(FollowNav.Camera.Up         , Direction           , CameraMoveDirectionSpeed, 0.01);
 
   case AnimationState of
     asVertical:
@@ -259,7 +259,7 @@ begin
       begin
         AnimationState := asIdle;
         AnimationTime := 0;
-        Anim[asIdle].PlayAnimation('animation', paForceLooping);
+        Anim[asIdle].PlayAnimation('animation', true);
       end;
   end;
 
@@ -280,7 +280,7 @@ begin
   if CurrentMoveSound <> nil then
     CurrentMoveSound.Position := Position;
 
-  PlayerPositionXZ := Vector2(Player.Position[0], Player.Position[2]);
+  PlayerPositionXZ := Vector2(Player.Position.X, Player.Position.Z);
   if PointsDistance(PlayerPositionXZ, Position2D) <= DistanceToFinishTutorial then
   begin
     WormIntroLabel.Exists := false;
@@ -314,7 +314,7 @@ end;
 
 function TWorm.Position2D: TVector2;
 begin
-  Result := Vector2(Position[0], Position[2]);
+  Result := Vector2(Position.X, Position.Z);
 end;
 
 function TWorm.Dead: boolean;

@@ -1,5 +1,5 @@
 {
-  Copyright 2014-2017 Michalis Kamburelis.
+  Copyright 2014-2022 Michalis Kamburelis.
 
   This file is part of "Mountains Of Fire".
 
@@ -42,7 +42,7 @@ var
 implementation
 
 uses Math,
-  CastleFilesUtils, CastleRenderingCamera, CastleGLUtils, CastleKeysMouse,
+  CastleFilesUtils, CastleGLUtils, CastleKeysMouse,
   CastleUtils, CastlePlayer, CastleSceneCore,
   Game3D, GameWindow, GamePlayer;
 

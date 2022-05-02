@@ -240,18 +240,18 @@ begin
   if (not Player.Dead) and (not Dead) and
     { not before "tutorial" finished } ViewportWorm.Exists then
   begin
-    if Window.Container.Pressed[K_A] then
+    if Window.Container.Pressed[keyA] then
       Rotate(-1);
-    if Window.Container.Pressed[K_D] then
+    if Window.Container.Pressed[keyD] then
       Rotate(+1);
-    if Window.Container.Pressed[K_W] then
+    if Window.Container.Pressed[keyW] then
       Move(+1);
-    if Window.Container.Pressed[K_S] then
+    if Window.Container.Pressed[keyS] then
       Move(-1);
   end;
 
-  FollowNav.Camera.Translation := MoveCloser(FollowNav.Camera.Translation, TargetCameraPosition, CameraMoveSpeed, 0.01);
-  FollowNav.Camera.Up          := MoveCloser(FollowNav.Camera.Up         , Direction           , CameraMoveDirectionSpeed, 0.01);
+  FollowNav.Camera.Position := MoveCloser(FollowNav.Camera.Position, TargetCameraPosition, CameraMoveSpeed, 0.01);
+  FollowNav.Camera.Up       := MoveCloser(FollowNav.Camera.Up      , Direction           , CameraMoveDirectionSpeed, 0.01);
 
   case AnimationState of
     asVertical:

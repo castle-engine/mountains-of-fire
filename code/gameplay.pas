@@ -99,6 +99,9 @@ procedure GameBegin;
     ButtonsRemove;
   end;
 
+const
+  UIMargin = 10;
+  LifeBarHeight = 40;
 begin
   GameEnd;
 
@@ -121,10 +124,18 @@ begin
   Window.Controls.InsertFront(ViewportWorm);
 
   PlayerHud := TPlayerHud.Create(Window);
-  Window.Controls.InsertFront(PlayerHud);
+  PlayerHud.WidthFraction := 0.9;
+  PlayerHud.Height := LifeBarHeight;
+  PlayerHud.Anchor(hpMiddle);
+  PlayerHud.Anchor(vpBottom, UIMargin);
+  ViewportPlayer.InsertFront(PlayerHud);
 
   WormHud := TWormHud.Create(Window);
-  Window.Controls.InsertFront(WormHud);
+  WormHud.WidthFraction := 0.9;
+  WormHud.Height := LifeBarHeight;
+  WormHud.Anchor(hpMiddle);
+  WormHud.Anchor(vpBottom, UIMargin);
+  ViewportWorm.InsertFront(WormHud);
 
   WormIntroLabel := TCastleLabel.Create(Window);
   WormIntroLabel.Text.Text :=

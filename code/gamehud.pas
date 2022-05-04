@@ -1,5 +1,5 @@
 {
-  Copyright 2014-2017 Michalis Kamburelis.
+  Copyright 2014-2022 Michalis Kamburelis.
 
   This file is part of "Mountains Of Fire".
 
@@ -33,13 +33,11 @@ type
 
   TPlayerHud = class(THud)
   public
-    function Rect: TFloatRectangle; override;
     procedure Render; override;
   end;
 
   TWormHud = class(THud)
   public
-    function Rect: TFloatRectangle; override;
     procedure Render; override;
   end;
 
@@ -51,10 +49,6 @@ implementation
 
 uses CastleGLUtils, CastleColors, CastleUtils,
   GameWorm;
-
-const
-  UIMargin = 10;
-  LifeBarHeight = 40;
 
 { THud ----------------------------------------------------------------------- }
 
@@ -74,22 +68,17 @@ end;
 
 { TPlayerHud ----------------------------------------------------------------- }
 
-function TPlayerHud.Rect: TFloatRectangle;
-begin
-  { horizontal bar, good for both left and right-handed }
-  Result := ViewportPlayer.Rect.Grow(-UIMargin);
-  Result.Height := LifeBarHeight;
-end;
-
 procedure TPlayerHud.Render;
 var
   R: TFloatRectangle;
   Badly: boolean;
 begin
+  inherited;
+
   if Player.Dead then
-    GLFadeRectangleDark(ViewportPlayer.Rect, Red, 1.0)
+    GLFadeRectangleDark(ViewportPlayer.RenderRect, Red, 1.0)
   else
-    GLFadeRectangleDark(ViewportPlayer.Rect, Player.FadeOutColor, Player.FadeOutIntensity);
+    GLFadeRectangleDark(ViewportPlayer.RenderRect, Player.FadeOutColor, Player.FadeOutIntensity);
 
   Badly := BadlyHurt(Player.Life, Player.MaxLife);
   R := RenderRect;
@@ -105,21 +94,16 @@ end;
 
 { TWormHud ------------------------------------------------------------------- }
 
-function TWormHud.Rect: TFloatRectangle;
-begin
-  { horizontal bar, good for both left and right-handed }
-  Result := ViewportWorm.Rect.Grow(-UIMargin);
-  Result.Height := LifeBarHeight;
-end;
-
 procedure TWormHud.Render;
 var
   R: TFloatRectangle;
   NewWidth: Single;
   Badly: boolean;
 begin
+  inherited;
+
   if Worm.Dead then
-    GLFadeRectangleDark(ViewportWorm.Rect, Red, 1.0);
+    GLFadeRectangleDark(ViewportWorm.RenderRect, Red, 1.0);
 
   Badly := BadlyHurt(Worm.Life, Worm.MaxLife);
   R := RenderRect;

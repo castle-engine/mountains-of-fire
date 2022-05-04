@@ -52,14 +52,27 @@ Group {
         0 1 0 0
         0 0 1 0
         0 0 0 1
-      parts EffectPart {
-        type "FRAGMENT"
-        url "data:text/plain,
-uniform vec2 ice_position;
-uniform float ice_strength;
+
+      parts [
+        EffectPart {
+          type "VERTEX"
+          url "data:text/plain,
 uniform mat4 cameraInverseMatrix;
 
-varying vec4 castle_vertex_eye;
+varying vec3 vertex_world;
+
+void PLUG_vertex_eye_space(const in vec4 vertex_eye, const in vec3 normal_eye)
+{
+  vertex_world = vec3(cameraInverseMatrix * vertex_eye);
+}" }
+
+        EffectPart {
+          type "FRAGMENT"
+          url "data:text/plain,
+uniform vec2 ice_position;
+uniform float ice_strength;
+
+varying vec3 vertex_world;
 
 /* routines to convert rgb<->hsv from http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl */
 
@@ -83,10 +96,8 @@ vec3 hsv2rgb(vec3 c)
   return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
-void PLUG_texture_apply(inout vec4 fragment_color, const in vec3 normal)
+void PLUG_fragment_modify(inout vec4 fragment_color)
 {
-  vec4 vertex_world = cameraInverseMatrix * castle_vertex_eye;
-
   /* instead of taking normal fragment_color.rgb for hsv, it's better to only include red, this makes nicer shift to pure blue hue */
   vec3 hsv = rgb2hsv(vec3(fragment_color.r, 0.0, 0.0));
   hsv.x += 0.55;
@@ -95,7 +106,7 @@ void PLUG_texture_apply(inout vec4 fragment_color, const in vec3 normal)
 
   const float ICE_DISTANCE_MIN = 2.5;
   const float ICE_DISTANCE_MAX = 10.0;
-  float dist = distance(vertex_world.xz / vertex_world.w, ice_position);
+  float dist = distance(vertex_world.xz, ice_position);
   dist = smoothstep(ICE_DISTANCE_MIN, ICE_DISTANCE_MAX, dist);
   fragment_color.rgb = mix(fragment_color.rgb, fragment_color_ice, ice_strength * (1.0 - dist));
 
@@ -103,7 +114,8 @@ void PLUG_texture_apply(inout vec4 fragment_color, const in vec3 normal)
 //  fragment_color.r = min(fragment_color.r, 0.1);
 //  fragment_color.g = min(fragment_color.g, 0.1);
 }"
-      }
+        }
+      ]
     }
 
     DEF LavaShape Shape {

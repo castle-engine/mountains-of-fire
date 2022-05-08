@@ -112,7 +112,7 @@ begin
   SceneManager.Items.Add(Player);
   SceneManager.Player := Player;
 
-  Player.Camera.MouseLook := true;
+  Player.WalkNavigation.MouseLook := true;
 
   // SceneManager.UseGlobalLights := true;
 
@@ -189,16 +189,16 @@ begin
   Worm.FollowNavUpdateNow;
 
   SceneManager.LoadLevel('mountains');
-  SetAttributes(SceneManager.MainScene.Attributes);
+  SetAttributes(SceneManager.Items.MainScene.RenderOptions);
 
   if DebugSpeed then
-    Player.Camera.MoveSpeed := 10;
+    Player.WalkNavigation.MoveSpeed := 10;
 
-  PointLightOverPlayer := SceneManager.MainScene.RootNode.FindNodeByName(
+  PointLightOverPlayer := SceneManager.Items.MainScene.RootNode.FindNodeByName(
     TPointLightNode, 'PointLightOverPlayer', false) as TPointLightNode;
 
-  IcePositionField := SceneManager.MainScene.Field('IceEffect', 'ice_position') as TSFVec2f;
-  IceStrengthField := SceneManager.MainScene.Field('IceEffect', 'ice_strength') as TSFFloat;
+  IcePositionField := SceneManager.Items.MainScene.Field('IceEffect', 'ice_position') as TSFVec2f;
+  IceStrengthField := SceneManager.Items.MainScene.Field('IceEffect', 'ice_strength') as TSFFloat;
 
   SceneManager.Items.Add(Worm);
   SceneManager.Items.Add(Player3rdPerson);
@@ -230,28 +230,28 @@ begin
   if Event.IsKey(K_F3) then
   begin
     InitializeLog;
-    Player.Camera.GetView(Pos, Dir, Up, GravityUp);
+    Player.WalkNavigation.GetView(Pos, Dir, Up, GravityUp);
     WritelnLog('Camera', MakeCameraStr(cvVrml2_X3d, false, Pos, Dir, Up, GravityUp));
   end;
   {$endif}
 
-  if Event.IsKey(K_F5) then
+  if Event.IsKey(keyF5) then
     Window.SaveScreen(FileNameAutoInc(ApplicationName + '_screen_%d.png'));
-  if Event.IsKey(K_Escape) then
+  if Event.IsKey(keyEscape) then
     Window.Close;
 
-  if Event.IsMouseButton(mbLeft) and not Player.Dead then
+  if Event.IsMouseButton(buttonLeft) and not Player.Dead then
   begin
-    Player.Camera.MoveForward := not Player.Camera.MoveForward;
+    Player.WalkNavigation.MoveForward := not Player.WalkNavigation.MoveForward;
     { make sure only one MoveXxx is true, otherwise it's confusing what is going on }
-    if Player.Camera.MoveForward then
-      Player.Camera.MoveBackward := false;
+    if Player.WalkNavigation.MoveForward then
+      Player.WalkNavigation.MoveBackward := false;
   end;
-  if Event.IsMouseButton(mbRight) and not Player.Dead then
+  if Event.IsMouseButton(buttonRight) and not Player.Dead then
   begin
-    Player.Camera.MoveBackward := not Player.Camera.MoveBackward;
-    if Player.Camera.MoveBackward then
-      Player.Camera.MoveForward := false;
+    Player.WalkNavigation.MoveBackward := not Player.WalkNavigation.MoveBackward;
+    if Player.WalkNavigation.MoveBackward then
+      Player.WalkNavigation.MoveForward := false;
   end;
 end;
 
@@ -267,7 +267,7 @@ procedure GameUpdate(Container: TUIContainer);
     Player.Exists := false;
     Player3rdPerson.Exists := false;
     try
-      Collision := SceneManager.Items.WorldRay(Player.Position, -SceneManager.GravityUp);
+      Collision := SceneManager.Items.WorldRay(Player.Position, -SceneManager.Camera.GravityUp);
       Result :=
         (Collision <> nil) and
         (Collision.First.Triangle <> nil) and
@@ -310,7 +310,7 @@ begin
     if PlayerOverLava then
     begin
       { This follows algorithm how we calculate ice visualization in level1.x3dv shader }
-      PlayerPositionXZ := Vector2(Player.Position[0], Player.Position[2]);
+      PlayerPositionXZ := Vector2(Player.Translation.X, Player.Translation.Z);
       Dist := PointsDistance(PlayerPositionXZ, IcePosition);
       Dist := SmoothStep(IceDistanceMin, IceDistanceMax, Dist);
       LifeLoss := 1.0 - Worm.Stationary * (1.0 - Dist);
@@ -327,13 +327,13 @@ begin
   begin
     { make sure to disallow MoveXxx when dead }
     Player3rdPerson.Exists := false;
-    Player.Camera.MoveForward := false;
-    Player.Camera.MoveBackward := false;
+    Player.WalkNavigation.MoveForward := false;
+    Player.WalkNavigation.MoveBackward := false;
   end;
 
   GameEndButtons := GameWin or Player.Dead;
   if GameEndButtons then
-    Player.Camera.MouseLook := false;
+    Player.WalkNavigation.MouseLook := false;
   RestartButton.Exists := GameEndButtons;
   QuitButton.Exists := GameEndButtons;
 end;

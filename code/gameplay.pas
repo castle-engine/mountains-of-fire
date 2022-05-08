@@ -179,12 +179,13 @@ begin
   Progress.Step;
   Progress.Fini;
 
-  ViewportWorm.NavigationType := ntWalk;
-  Worm.FollowNav := ViewportWorm.WalkCamera;
+  Worm.FollowNav := TCastleWalkNavigation.Create(Window);
   Worm.FollowNav.Gravity := false;
   //Worm.FollowNav.GoToInitial; // TODO -- need to do anything?
   Worm.FollowNav.Input := [];
   Worm.FollowNav.Radius := 0.1; // allow near projection plane (calculated based on this radius) be larger
+
+  ViewportWorm.InsertBack(Worm.FollowNav);
   Worm.FollowNavUpdateNow;
 
   SceneManager.LoadLevel('mountains');

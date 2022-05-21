@@ -185,7 +185,8 @@ begin
   Worm.FollowNav.Input := [];
   Worm.FollowNav.Radius := 0.1; // allow near projection plane (calculated based on this radius) be larger
 
-  ViewportWorm.InsertBack(Worm.FollowNav);
+  ViewportWorm.Navigation :=  Worm.FollowNav;
+  // ViewportWorm.InsertBack(Worm.FollowNav); // in new-cameras branch, use this
   Worm.FollowNavUpdateNow;
 
   SceneManager.LoadLevel('mountains');

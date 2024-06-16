@@ -51,7 +51,6 @@ end;
 
 begin
   UserConfig.Load;
-  SoundEngine.LoadFromConfig(UserConfig); // before SoundEngine.ParseParameters
 
   SoundEngine.ParseParameters;
   Window.FullScreen := true;

@@ -56,9 +56,8 @@ begin
   Anim[asIdle] := TCastleScene.Create(Self);
   Anim[asIdle].Load(ApplicationData('player/idle.kanim'));
   Anim[asIdle].ProcessEvents := true;
-  Anim[asIdle].PlayAnimation('animation', paForceLooping);
+  Anim[asIdle].PlayAnimation('animation', true);
   Anim[asIdle].TimePlayingSpeed := AnimPlayingSpeed;
-  SetAttributes(Anim[asIdle].Attributes);
   Add(Anim[asIdle]);
 
 {
@@ -66,16 +65,14 @@ begin
   Anim[asWalk].LoadFromFile(ApplicationData('player/walk.kanim'), false, false, 1);
   Anim[asWalk].TimeLoop := true;
   Anim[asWalk].TimePlayingSpeed := AnimPlayingSpeed;
-  SetAttributes(Anim[asWalk].Attributes);
   Add(Anim[asWalk]);
 }
 
   Anim[asRun] := TCastleScene.Create(Self);
   Anim[asRun].Load(ApplicationData('player/run.kanim'));
   Anim[asRun].ProcessEvents := true;
-  Anim[asRun].PlayAnimation('animation', paForceLooping);
+  Anim[asRun].PlayAnimation('animation', true);
   Anim[asRun].TimePlayingSpeed := AnimPlayingSpeed;
-  SetAttributes(Anim[asRun].Attributes);
   Add(Anim[asRun]);
 
   AnimationState := asIdle;

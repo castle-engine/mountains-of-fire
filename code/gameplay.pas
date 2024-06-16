@@ -43,7 +43,7 @@ procedure GameResize(Container: TUIContainer);
 implementation
 
 uses SysUtils, Math,
-  CastleProgress, CastleWindowProgress, CastleResources,
+  CastleResources,
   CastleWindow, CastleVectors, CastleTransform,
   CastleRenderer, CastleMaterialProperties, CastleFilesUtils,
   CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
@@ -169,15 +169,9 @@ begin
 
   { OpenGL context required from now on }
 
-  Progress.Init(1, 'Loading worm');
   Worm := TWorm.Create(Window);
-  Progress.Step;
-  Progress.Fini;
 
-  Progress.Init(1, 'Loading player');
   Player3rdPerson := TPlayer3rdPerson.Create(Window);
-  Progress.Step;
-  Progress.Fini;
 
   Worm.FollowNav := TCastleWalkNavigation.Create(Window);
   Worm.FollowNav.Gravity := false;
@@ -190,7 +184,6 @@ begin
   Worm.FollowNavUpdateNow;
 
   SceneManager.LoadLevel('mountains');
-  SetAttributes(SceneManager.Items.MainScene.RenderOptions);
 
   if DebugSpeed then
     Player.WalkNavigation.MoveSpeed := 10;
@@ -268,7 +261,7 @@ procedure GameUpdate(Container: TUIContainer);
     Player.Exists := false;
     Player3rdPerson.Exists := false;
     try
-      Collision := SceneManager.Items.WorldRay(Player.Position, -SceneManager.Camera.GravityUp);
+      Collision := SceneManager.Items.WorldRay(Player.Translation, -SceneManager.Camera.GravityUp);
       Result :=
         (Collision <> nil) and
         (Collision.First.Triangle <> nil) and
@@ -301,7 +294,7 @@ begin
 
   PointLightOverPlayer.FdLocation.Send(Pos + Vector3(0, 2, 0));
 
-  IcePosition := Worm.Position2D;
+  IcePosition := Worm.Translation2D;
   IceStrength := Worm.Stationary;
   IcePositionField.Send(IcePosition);
   IceStrengthField.Send(IceStrength);
@@ -371,15 +364,15 @@ begin
   WormIntroLabel.Align(hpMiddle, hpMiddle);
   { center horizontally within ViewportWorm }
   if RightHanded then
-    WormIntroLabel.Left := WormIntroLabel.Left - Container.Width div 4 else
-    WormIntroLabel.Left := WormIntroLabel.Left + Container.Width div 4;
+    WormIntroLabel.Left := WormIntroLabel.Left - Container.PixelsWidth div 4 else
+    WormIntroLabel.Left := WormIntroLabel.Left + Container.PixelsWidth div 4;
   WormIntroLabel.Align(vpMiddle, vpMiddle);
 
   WormLifeLabel.Align(hpMiddle, hpMiddle);
   { center horizontally within ViewportWorm }
   if RightHanded then
-    WormLifeLabel.Left := WormLifeLabel.Left - Container.Width div 4 else
-    WormLifeLabel.Left := WormLifeLabel.Left + Container.Width div 4;
+    WormLifeLabel.Left := WormLifeLabel.Left - Container.PixelsWidth div 4 else
+    WormLifeLabel.Left := WormLifeLabel.Left + Container.PixelsWidth div 4;
   WormLifeLabel.Align(vpTop, vpTop, -10);
 
   ButtonsResize;

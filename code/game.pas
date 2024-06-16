@@ -21,7 +21,7 @@ interface
 implementation
 
 uses SysUtils,
-  CastleProgress, CastleWindowProgress, CastleResources,
+  CastleResources,
   CastleUIControls, CastleWindow, CastleVectors, CastleControls,
   CastleSoundEngine, CastleFilesUtils, CastleMaterialProperties, CastlePlayer,
   CastleLevels, CastleImages, CastleKeysMouse,
@@ -32,12 +32,9 @@ procedure ApplicationInitialize;
 var
   Background: TCastleSimpleBackground;
 begin
-//  ApplicationProperties.OnWarning.Add(@ApplicationProperties.WriteWarningOnConsole);
-  Progress.UserInterface := WindowProgressInterface;
-
   { do this before loading level and creating TWarm, as they use named sounds }
   SoundEngine.RepositoryURL := 'castle-data:/sounds/index.xml';
-  SoundEngine.MusicPlayer.MusicVolume := 0.5;
+  SoundEngine.LoopingChannel[0].Volume := 0.5;
 
   MaterialProperties.URL := 'castle-data:/material_properties.xml';
 
@@ -58,9 +55,6 @@ begin
 
   Resources.LoadFromFiles;
   Levels.LoadFromFiles;
-
-  Progress.UserInterface.Image := LoadImage('castle-data:/level1/splash.png', [TRGBImage]) as TRGBImage;
-  Progress.UserInterface.OwnsImage := true;
 
   GameBegin;
 end;

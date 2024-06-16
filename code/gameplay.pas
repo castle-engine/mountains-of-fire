@@ -65,7 +65,7 @@ procedure TMySceneManager.Render;
 var
   SavedExists: Boolean;
 begin
-  { Player3rdPerson is visible only in WormViewport }
+  { Player3rdPerson is visible only in ViewportWorm }
   SavedExists := Player3rdPerson.Exists;
   Player3rdPerson.Exists := false;
   inherited;
@@ -120,7 +120,10 @@ begin
   Window.Container.ForceCaptureInput := ViewportPlayer;
 
   ViewportWorm := TCastleViewport.Create(Application);
+  ViewportWorm.Items.Remove(ViewportWorm.Camera);
   ViewportWorm.SceneManager := SceneManager;
+  // Add ViewportWorm.Camera to proper world, see https://castle-engine.io/multiple_viewports_to_display_one_world
+  ViewportWorm.Items.Add(ViewportWorm.Camera);
   Window.Controls.InsertFront(ViewportWorm);
 
   PlayerHud := TPlayerHud.Create(Window);

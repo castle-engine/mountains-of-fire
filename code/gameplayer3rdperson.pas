@@ -44,7 +44,7 @@ implementation
 uses Math,
   CastleFilesUtils, CastleGLUtils, CastleKeysMouse,
   CastleUtils, CastlePlayer, CastleSceneCore,
-  Game3D, GameWindow, GamePlayer;
+  GameWindow, GamePlayer;
 
 const
   AnimPlayingSpeed = 1.0;

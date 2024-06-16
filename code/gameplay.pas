@@ -49,7 +49,7 @@ uses SysUtils, Math,
   CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
   X3DNodes, X3DFields, CastleShapes, X3DCameraUtils,
-  Game3D, GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer,
+  GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer,
   GameButtons;
 
 const

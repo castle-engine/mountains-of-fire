@@ -72,7 +72,7 @@ implementation
 uses Math,
   CastleFilesUtils, CastleGLUtils, CastleKeysMouse,
   CastleUtils, CastleSceneCore, X3DNodes, CastleRenderContext, CastleRenderOptions,
-  Game3D, GameWindow, GamePlayer, GameHUD;
+  GameWindow, GamePlayer, GameHUD;
 
 const
   NeutralPoseTolerance = 0.33; // in seconds

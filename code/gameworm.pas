@@ -41,7 +41,7 @@ type
     property AnimationState: TAnimationState read FAnimationState write SetAnimationState;
   public
     const
-      DefaultAltitude = -1;
+      DefaultAltitude = 0;
     var
     { Camera following worm. }
     FollowNav: TCastleWalkNavigation;
@@ -84,13 +84,17 @@ const
   StationaryRaiseSpeed = 0.5;
   StationaryFallSpeed = 2;
   RotationSpeed = 2; //< in degreees/sec
-  DistanceToFinishTutorial = 6;
+  DistanceToFinishTutorial = 6; // hint for debugging: just increase it to finish tutorial immediately
   StationaryLifeLossTime = 2.0;
   StationaryLifeLossSpeed = 5.0;
   RegenerateLifeSpeed = 2.0;
   RegainTimeToStationaryLifeLoss = 0.1;
 
 constructor TWorm.Create(AOwner: TComponent);
+var
+  // debug sphere
+  //S: TCastleSphere;
+  Light: TCastlePointLight;
 begin
   inherited;
 
@@ -107,6 +111,21 @@ begin
   Anim[asIdle].PlayAnimation('animation', true);
   Anim[asIdle].TimePlayingSpeed := AnimPlayingSpeed;
   Add(Anim[asIdle]);
+
+  { Hacky way to make worm brighter.
+    Non-hacky way would be to make new worm model, in Blender,
+    using glTF morph targets instead of kanim. }
+  Light := TCastlePointLight.Create(Self);
+  Light.Translation := Vector3(0, 2, 0);
+  Light.Radius := 2;
+  Light.Intensity := 2;
+  Add(Light);
+
+  // S := TCastleSphere.Create(Self) { for debug };
+  // S.Color := Vector4(1, 0, 0, 0.25);
+  // //S.Material := pmUnlit;
+  // S.Radius := 2;
+  // Add(S);
 
   AnimationState := asIdle;
 

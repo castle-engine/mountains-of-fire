@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+
+<!--
+TODO: This is ignored by CGE now, we deprecated then removed
+CastleMaterialProperties support.
+-->
+
 <properties>
   <property texture_base_name="bone_warts-1024_contrast"
     normal_map="worm/textures/bone_warts-1024_contrast_normalmap.png" />

@@ -18,12 +18,12 @@ unit GamePlayer;
 
 interface
 
-uses Classes, CastlePlayer, CastleSceneManager;
+uses Classes, CastlePlayer, CastleViewport;
 
 var
   Player: TPlayer;
 
-  ViewportPlayer: TCastleAbstractViewport;
+  ViewportPlayer: TCastleViewport;
 
 implementation
 

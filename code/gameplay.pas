@@ -18,7 +18,7 @@ unit GamePlay;
 
 interface
 
-uses CastleLevels, CastlePlayer, CastleCameras, CastleSceneManager,
+uses CastleLevels, CastlePlayer, CastleCameras, CastleViewport,
   CastleUIControls, CastleKeysMouse;
 
 type
@@ -34,6 +34,8 @@ var
 
   GameWin: boolean = false;
 
+{ TODO: Remake this to use TCastleView, https://castle-engine.io/views }
+
 procedure GameBegin;
 
 procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
@@ -45,7 +47,7 @@ implementation
 uses SysUtils, Math,
   CastleResources,
   CastleWindow, CastleVectors, CastleTransform,
-  CastleRenderer, CastleMaterialProperties, CastleFilesUtils,
+  CastleRenderOptions, CastleMaterialProperties, CastleFilesUtils,
   CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
   X3DNodes, X3DFields, CastleShapes, X3DCameraUtils,
@@ -121,7 +123,7 @@ begin
 
   ViewportWorm := TCastleViewport.Create(Application);
   ViewportWorm.Items.Remove(ViewportWorm.Camera);
-  ViewportWorm.SceneManager := SceneManager;
+  ViewportWorm.Items := SceneManager.Items;
   // Add ViewportWorm.Camera to proper world, see https://castle-engine.io/multiple_viewports_to_display_one_world
   ViewportWorm.Items.Add(ViewportWorm.Camera);
   Window.Controls.InsertFront(ViewportWorm);
@@ -339,7 +341,7 @@ procedure GameResize(Container: TUIContainer);
 const
   ViewportsMargin = 4;
 var
-  ViewportLeft, ViewportRight: TCastleAbstractViewport;
+  ViewportLeft, ViewportRight: TCastleViewport;
 begin
   if RightHanded then
   begin

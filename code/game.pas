@@ -23,9 +23,52 @@ implementation
 uses SysUtils,
   CastleResources,
   CastleUIControls, CastleWindow, CastleVectors, CastleControls,
-  CastleSoundEngine, CastleFilesUtils, CastleMaterialProperties, CastlePlayer,
+  CastleSoundEngine, CastleFilesUtils, CastlePlayer,
+  CastleApplicationProperties,
   CastleLevels, CastleImages, CastleKeysMouse,
   GameLevels, GamePlay, GameWindow;
+
+
+{ TMyView -------------------------------------------------------------------- }
+
+type
+  { View that passes events to GameXxx global routines.
+
+    TODO: This is a weird usage of TCastleView, caused by history
+    (this code was originally written before TCastleView existed),
+    should be refactored to follow more standard approach,
+    see https://castle-engine.io/views .
+    The GameXxx global routines should be remade to implement sthg like
+    TGameView in GamePlay unit. }
+  TMyView = class(TCastleView)
+  public
+    function Press(const Event: TInputPressRelease): boolean; override;
+    procedure Update(const SecondsPassed: Single; var HandleInput: boolean); override;
+    procedure Resize; override;
+  end;
+
+function TMyView.Press(const Event: TInputPressRelease): boolean;
+begin
+  Result := inherited;
+  GamePress(Container, Event);
+end;
+
+procedure TMyView.Update(const SecondsPassed: Single; var HandleInput: boolean);
+begin
+  inherited;
+  GameUpdate(Container);
+end;
+
+procedure TMyView.Resize;
+begin
+  inherited;
+  GameResize(Container);
+end;
+
+var
+  MyView: TMyView;
+
+{ initialization ------------------------------------------------------------- }
 
 { One-time initialization. }
 procedure ApplicationInitialize;
@@ -35,8 +78,6 @@ begin
   { do this before loading level and creating TWarm, as they use named sounds }
   SoundEngine.RepositoryURL := 'castle-data:/sounds/index.xml';
   SoundEngine.LoopingChannel[0].Volume := 0.5;
-
-  MaterialProperties.URL := 'castle-data:/material_properties.xml';
 
   PlayerInput_LeftRotate.MakeClear(true);
   PlayerInput_RightRotate.MakeClear(true);
@@ -56,41 +97,22 @@ begin
   Resources.LoadFromFiles;
   Levels.LoadFromFiles;
 
+  // TODO: GameBegin should change to TGamePlay.Start, https://castle-engine.io/views
   GameBegin;
-end;
 
-procedure WindowPress(Container: TUIContainer; const Event: TInputPressRelease);
-begin
-  GamePress(Container, Event);
-end;
-
-procedure WindowUpdate(Container: TUIContainer);
-begin
-  GameUpdate(Container);
-end;
-
-procedure WindowResize(Container: TUIContainer);
-begin
-  GameResize(Container);
-end;
-
-function MyGetApplicationName: string;
-begin
-  Result := 'mountains_of_fire';
+  MyView := TMyView.Create(Application);
+  Window.Container.View := MyView;
 end;
 
 initialization
   { This should be done as early as possible to mark our log lines correctly. }
-  OnGetApplicationName := @MyGetApplicationName;
+  ApplicationProperties.ApplicationName := 'mountains_of_fire';
 
   { initialize Application callbacks }
   Application.OnInitialize := @ApplicationInitialize;
 
   { create Window and initialize Window callbacks }
-  Window := TCastleWindowBase.Create(Application);
-  Window.OnPress := @WindowPress;
-  Window.OnUpdate := @WindowUpdate;
-  Window.OnResize := @WindowResize;
+  Window := TCastleWindow.Create(Application);
   Window.FpsShowOnCaption := true;
   Application.MainWindow := Window;
 end.

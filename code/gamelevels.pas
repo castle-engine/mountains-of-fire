@@ -18,7 +18,7 @@ unit GameLevels;
 
 interface
 
-uses CastleLevels, CastleShapes, CastleBoxes, Castle3D;
+uses CastleLevels, CastleShapes, CastleBoxes, CastleTransform, CastleTransformExtra;
 
 type
   TLevel1 = class(TLevelLogic)

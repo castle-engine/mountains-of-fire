@@ -237,13 +237,13 @@ begin
   if Result then Exit;
 
   {$ifdef DEBUG_KEYS}
-  if Event.IsKey(K_F2) then
+  if Event.IsKey(keyF2) then
   begin
     { debug examine view }
     SceneManager.NavigationType := ntExamine;
   end;
 
-  if Event.IsKey(K_F3) then
+  if Event.IsKey(keyF3) then
   begin
     InitializeLog;
     Player.WalkNavigation.GetView(Pos, Dir, Up, GravityUp);

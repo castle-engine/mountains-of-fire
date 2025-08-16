@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <sounds>
-  <sound name="music" default_importance="max" file_name="alone.wav" />
+  <sound name="music" file_name="alone.wav" stream="true" />
 
-  <sound name="worm_move_0" default_importance="player" file_name="impactsplat02.wav" gain="0.75" />
-  <sound name="worm_move_1" default_importance="player" file_name="impactsplat03.wav" gain="0.75" />
-  <sound name="worm_move_2" default_importance="player" file_name="impactsplat04.wav" gain="0.75" />
-  <sound name="worm_move_3" default_importance="player" file_name="impactsplat05.wav" gain="0.75" />
+  <sound name="worm_move_0" file_name="impactsplat02.wav" volume="0.75" />
+  <sound name="worm_move_1" file_name="impactsplat03.wav" volume="0.75" />
+  <sound name="worm_move_2" file_name="impactsplat04.wav" volume="0.75" />
+  <sound name="worm_move_3" file_name="impactsplat05.wav" volume="0.75" />
 
-  <sound name="footsteps_dirt" default_importance="player" file_name="jute-dh-steps/stepdirt_whole.wav" gain="0.25" />
-  <sound name="footsteps_lava" default_importance="player" file_name="jute-dh-steps/stepsnow_whole.wav" gain="0.25" />
-  <sound name="footsteps_wood" default_importance="player" file_name="jute-dh-steps/stepwood_whole.wav" gain="0.25" />
+  <sound name="footsteps_dirt" file_name="jute-dh-steps/stepdirt_whole.wav" volume="0.25" />
+  <sound name="footsteps_lava" file_name="jute-dh-steps/stepsnow_whole.wav" volume="0.25" />
+  <sound name="footsteps_wood" file_name="jute-dh-steps/stepwood_whole.wav" volume="0.25" />
 </sounds>

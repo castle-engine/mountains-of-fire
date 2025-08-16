@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="mountains_of_fire"
-  standalone_source="code/mountains_of_fire.dpr">
+  standalone_source="mountains_of_fire.dpr">
   <version value="1.1.0" />
   <package>
     <include path="README.txt" />

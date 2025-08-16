@@ -65,7 +65,7 @@
     </RequiredPackages>
     <Units Count="2">
       <Unit0>
-        <Filename Value="code/mountains_of_fire.lpr"/>
+        <Filename Value="code/mountains_of_fire.dpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>

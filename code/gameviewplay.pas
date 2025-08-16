@@ -1,5 +1,5 @@
 {
-  Copyright 2014-2022 Michalis Kamburelis.
+  Copyright 2014-2025 Michalis Kamburelis.
 
   This file is part of "Mountains Of Fire".
 
@@ -13,8 +13,10 @@
   ----------------------------------------------------------------------------
 }
 
-{ Game playing (as opposed to game options screen, that may be added in the future). }
-unit GamePlay;
+{ Game playing.
+  Practically, this is the only view of the game,
+  only sometimes we push ViewEndButtons in front of this. }
+unit GameViewPlay;
 
 interface
 
@@ -34,13 +36,19 @@ var
 
   GameWin: boolean = false;
 
-{ TODO: Remake this to use TCastleView, https://castle-engine.io/views }
+type
+  { View that represents the game. }
+  TViewPlay = class(TCastleView)
+  public
+    procedure GameBegin;
+    procedure Start; override;
+    function Press(const Event: TInputPressRelease): boolean; override;
+    procedure Update(const SecondsPassed: Single; var HandleInput: boolean); override;
+    procedure Resize; override;
+  end;
 
-procedure GameBegin;
-
-procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
-procedure GameUpdate(Container: TUIContainer);
-procedure GameResize(Container: TUIContainer);
+var
+  ViewPlay: TViewPlay;
 
 implementation
 
@@ -51,8 +59,8 @@ uses SysUtils, Math,
   CastleUtils, CastleSoundEngine, CastleControls, CastleLog,
   CastleImages, CastleColors,
   X3DNodes, X3DFields, CastleShapes, X3DCameraUtils,
-  GameWorm, GamePlayer3rdPerson, GameWindow, GameHUD, GamePlayer,
-  GameButtons;
+  GameWorm, GamePlayer3rdPerson, GameHUD, GamePlayer,
+  GameViewEndButtons;
 
 const
   LavaLifeLossSpeed = 5.0;
@@ -74,7 +82,20 @@ begin
   Player3rdPerson.Exists := SavedExists;
 end;
 
-procedure GameBegin;
+procedure TViewPlay.Start;
+var
+  Background: TCastleSimpleBackground;
+begin
+  inherited;
+
+  Background := TCastleSimpleBackground.Create(FreeAtStop);
+  Background.Color := Vector4(0.1, 0, 0, 1);
+  InsertBack(Background);
+
+  GameBegin;
+end;
+
+procedure TViewPlay.GameBegin;
 
   { Make sure to free and clear all stuff started during the game. }
   procedure GameEnd;
@@ -97,8 +118,6 @@ procedure GameBegin;
     IcePositionField := nil; // already freed when freeing SceneManager
     IceStrengthField := nil;
     GameWin := false;
-
-    ButtonsRemove;
   end;
 
 const
@@ -107,10 +126,10 @@ const
 begin
   GameEnd;
 
-  SceneManager := TMySceneManager.Create(Window);
-  Window.Controls.InsertFront(SceneManager);
+  SceneManager := TMySceneManager.Create(FreeAtStop);
+  InsertFront(SceneManager);
 
-  Player := TPlayer.Create(SceneManager);
+  Player := TPlayer.Create(FreeAtStop);
   SceneManager.Items.Add(Player);
   SceneManager.Player := Player;
 
@@ -119,30 +138,30 @@ begin
   // SceneManager.UseGlobalLights := true;
 
   ViewportPlayer := SceneManager;
-  Window.Container.ForceCaptureInput := ViewportPlayer;
+  Container.ForceCaptureInput := ViewportPlayer;
 
-  ViewportWorm := TCastleViewport.Create(Application);
+  ViewportWorm := TCastleViewport.Create(FreeAtStop);
   ViewportWorm.Items.Remove(ViewportWorm.Camera);
   ViewportWorm.Items := SceneManager.Items;
   // Add ViewportWorm.Camera to proper world, see https://castle-engine.io/multiple_viewports_to_display_one_world
   ViewportWorm.Items.Add(ViewportWorm.Camera);
-  Window.Controls.InsertFront(ViewportWorm);
+  InsertFront(ViewportWorm);
 
-  PlayerHud := TPlayerHud.Create(Window);
+  PlayerHud := TPlayerHud.Create(FreeAtStop);
   PlayerHud.WidthFraction := 0.9;
   PlayerHud.Height := LifeBarHeight;
   PlayerHud.Anchor(hpMiddle);
   PlayerHud.Anchor(vpBottom, UIMargin);
   ViewportPlayer.InsertFront(PlayerHud);
 
-  WormHud := TWormHud.Create(Window);
+  WormHud := TWormHud.Create(FreeAtStop);
   WormHud.WidthFraction := 0.9;
   WormHud.Height := LifeBarHeight;
   WormHud.Anchor(hpMiddle);
   WormHud.Anchor(vpBottom, UIMargin);
   ViewportWorm.InsertFront(WormHud);
 
-  WormIntroLabel := TCastleLabel.Create(Window);
+  WormIntroLabel := TCastleLabel.Create(FreeAtStop);
   WormIntroLabel.Text.Text :=
     'Rotate by moving the mouse.' +LineEnding+
     LineEnding+
@@ -159,9 +178,9 @@ begin
     'or on the blue water very close to the sandworm.';
   WormIntroLabel.Frame := false;
   WormIntroLabel.Color := Red;
-  Window.Controls.InsertFront(WormIntroLabel);
+  InsertFront(WormIntroLabel);
 
-  WormLifeLabel := TCastleLabel.Create(Window);
+  WormLifeLabel := TCastleLabel.Create(FreeAtStop);
   WormLifeLabel.Text.Text :=
     'Move the sandworm or it will die soon.' +LineEnding+
     LineEnding+
@@ -170,15 +189,15 @@ begin
   WormLifeLabel.Frame := false;
   WormLifeLabel.Color := Yellow;
   WormLifeLabel.Exists := false;
-  Window.Controls.InsertFront(WormLifeLabel);
+  InsertFront(WormLifeLabel);
 
   { OpenGL context required from now on }
 
-  Worm := TWorm.Create(Window);
+  Worm := TWorm.Create(FreeAtStop);
 
-  Player3rdPerson := TPlayer3rdPerson.Create(Window);
+  Player3rdPerson := TPlayer3rdPerson.Create(FreeAtStop);
 
-  Worm.FollowNav := TCastleWalkNavigation.Create(Window);
+  Worm.FollowNav := TCastleWalkNavigation.Create(FreeAtStop);
   Worm.FollowNav.Gravity := false;
   //Worm.FollowNav.GoToInitial; // TODO -- need to do anything?
   Worm.FollowNav.Input := [];
@@ -205,20 +224,18 @@ begin
   ViewportWorm.Exists := false;
   WormHud.Exists := false;
   WormIntroLabel.Exists := true;
-
-  ButtonsAdd;
-
-  { initial resize to set size of everything }
-  GameResize(Window.Container);
 end;
 
-procedure GamePress(Container: TUIContainer; const Event: TInputPressRelease);
+function TViewPlay.Press(const Event: TInputPressRelease): Boolean;
 { $define DEBUG_KEYS}
 {$ifdef DEBUG_KEYS}
 var
   Pos, Dir, Up, GravityUp: TVector3;
 {$endif}
 begin
+  Result := inherited;
+  if Result then Exit;
+
   {$ifdef DEBUG_KEYS}
   if Event.IsKey(K_F2) then
   begin
@@ -235,9 +252,9 @@ begin
   {$endif}
 
   if Event.IsKey(keyF5) then
-    Window.SaveScreen(FileNameAutoInc(ApplicationName + '_screen_%d.png'));
+    Container.SaveScreen(FileNameAutoInc(ApplicationName + '_screen_%d.png'));
   if Event.IsKey(keyEscape) then
-    Window.Close;
+    Application.MainWindow.Close;
 
   if Event.IsMouseButton(buttonLeft) and not Player.Dead then
   begin
@@ -254,7 +271,7 @@ begin
   end;
 end;
 
-procedure GameUpdate(Container: TUIContainer);
+procedure TViewPlay.Update(const SecondsPassed: Single; var HandleInput: Boolean);
 
   function PlayerOverLava: boolean;
   var
@@ -291,6 +308,8 @@ var
   IceStrength, LifeLoss: Single;
   GameEndButtons: boolean;
 begin
+  inherited;
+
   ViewportPlayer.Camera.GetView(Pos, Dir, Up);
   GravityUp := ViewportPlayer.Camera.GravityUp;
   Up := GravityUp; // make sure that avatar always stands straight on ground
@@ -313,14 +332,14 @@ begin
       Dist := PointsDistance(PlayerPositionXZ, IcePosition);
       Dist := SmoothStep(IceDistanceMin, IceDistanceMax, Dist);
       LifeLoss := 1.0 - Worm.Stationary * (1.0 - Dist);
-      Player.Life := Player.Life - Window.Fps.SecondsPassed * LavaLifeLossSpeed * LifeLoss;
+      Player.Life := Player.Life - SecondsPassed * LavaLifeLossSpeed * LifeLoss;
     end else
       LifeLoss := 0;
 
     if LifeLoss = 0 then
     begin
       Player.Life := Min(Player.MaxLife, { do not regenerate over MaxLife }
-        Player.Life + Window.Fps.SecondsPassed * RegenerateLifeSpeed);
+        Player.Life + SecondsPassed * RegenerateLifeSpeed);
     end;
   end else
   begin
@@ -333,16 +352,20 @@ begin
   GameEndButtons := GameWin or Player.Dead;
   if GameEndButtons then
     Player.WalkNavigation.MouseLook := false;
-  RestartButton.Exists := GameEndButtons;
-  QuitButton.Exists := GameEndButtons;
+  if GameEndButtons and (Container.FrontView <> ViewEndButtons) then
+    Container.PushView(ViewEndButtons);
+  if (not GameEndButtons) and (Container.FrontView = ViewEndButtons) then
+    Container.PopView(ViewEndButtons);
 end;
 
-procedure GameResize(Container: TUIContainer);
+procedure TViewPlay.Resize;
 const
   ViewportsMargin = 4;
 var
   ViewportLeft, ViewportRight: TCastleViewport;
 begin
+  inherited;
+
   if RightHanded then
   begin
     ViewportRight := ViewportPlayer;
@@ -354,14 +377,14 @@ begin
   end;
 
   ViewportLeft.FullSize := false;
-  ViewportLeft.Width := Window.Width div 2 - ViewportsMargin;
-  ViewportLeft.Height := Window.Height;
+  ViewportLeft.Width := Container.Width div 2 - ViewportsMargin;
+  ViewportLeft.Height := Container.Height;
   ViewportLeft.Left := 0;
   ViewportLeft.Bottom := 0;
 
   ViewportRight.FullSize := false;
-  ViewportRight.Width := Window.Width - Window.Width div 2 - ViewportsMargin;
-  ViewportRight.Height := Window.Height;
+  ViewportRight.Width := Container.Width - Container.Width div 2 - ViewportsMargin;
+  ViewportRight.Height := Container.Height;
   ViewportRight.Left := ViewportLeft.Width + ViewportsMargin;
   ViewportRight.Bottom := 0;
 
@@ -379,8 +402,6 @@ begin
     WormLifeLabel.Left := WormLifeLabel.Left - Container.PixelsWidth div 4 else
     WormLifeLabel.Left := WormLifeLabel.Left + Container.PixelsWidth div 4;
   WormLifeLabel.Align(vpTop, vpTop, -10);
-
-  ButtonsResize;
 end;
 
 end.

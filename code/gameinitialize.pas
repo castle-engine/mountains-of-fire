@@ -1,5 +1,5 @@
 {
-  Copyright 2014-2017 Michalis Kamburelis.
+  Copyright 2014-2025 Michalis Kamburelis.
 
   This file is part of "Mountains Of Fire".
 
@@ -13,8 +13,8 @@
   ----------------------------------------------------------------------------
 }
 
-{ Implements the game application logic, independent from Android / standalone. }
-unit Game;
+{ Cross-platform application initialization. }
+unit GameInitialize;
 
 interface
 
@@ -26,54 +26,15 @@ uses SysUtils,
   CastleSoundEngine, CastleFilesUtils, CastlePlayer,
   CastleApplicationProperties,
   CastleLevels, CastleImages, CastleKeysMouse,
-  GameLevels, GamePlay, GameWindow;
-
-
-{ TMyView -------------------------------------------------------------------- }
-
-type
-  { View that passes events to GameXxx global routines.
-
-    TODO: This is a weird usage of TCastleView, caused by history
-    (this code was originally written before TCastleView existed),
-    should be refactored to follow more standard approach,
-    see https://castle-engine.io/views .
-    The GameXxx global routines should be remade to implement sthg like
-    TGameView in GamePlay unit. }
-  TMyView = class(TCastleView)
-  public
-    function Press(const Event: TInputPressRelease): boolean; override;
-    procedure Update(const SecondsPassed: Single; var HandleInput: boolean); override;
-    procedure Resize; override;
-  end;
-
-function TMyView.Press(const Event: TInputPressRelease): boolean;
-begin
-  Result := inherited;
-  GamePress(Container, Event);
-end;
-
-procedure TMyView.Update(const SecondsPassed: Single; var HandleInput: boolean);
-begin
-  inherited;
-  GameUpdate(Container);
-end;
-
-procedure TMyView.Resize;
-begin
-  inherited;
-  GameResize(Container);
-end;
-
-var
-  MyView: TMyView;
+  GameLevels, GameViewPlay, GameViewEndButtons;
 
 { initialization ------------------------------------------------------------- }
 
+var
+  Window: TCastleWindow;
+
 { One-time initialization. }
 procedure ApplicationInitialize;
-var
-  Background: TCastleSimpleBackground;
 begin
   { do this before loading level and creating TWarm, as they use named sounds }
   SoundEngine.RepositoryURL := 'castle-data:/sounds/index.xml';
@@ -90,18 +51,12 @@ begin
   PlayerInput_Jump.MakeClear(true);
   PlayerInput_Crouch.MakeClear(true);
 
-  Background := TCastleSimpleBackground.Create(Window);
-  Background.Color := Vector4(0.1, 0, 0, 1);
-  Window.Controls.InsertBack(Background);
-
   Resources.LoadFromFiles;
   Levels.LoadFromFiles;
 
-  // TODO: GameBegin should change to TGamePlay.Start, https://castle-engine.io/views
-  GameBegin;
-
-  MyView := TMyView.Create(Application);
-  Window.Container.View := MyView;
+  ViewPlay := TViewPlay.Create(Application);
+  ViewEndButtons := TViewEndButtons.Create(Application);
+  Window.Container.View := ViewPlay;
 end;
 
 initialization

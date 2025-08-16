@@ -33,7 +33,7 @@ type
 
 implementation
 
-uses GamePlayer, GamePlay;
+uses GamePlayer, GameViewPlay;
 
 { TLevel1 -------------------------------------------------------------------- }
 

@@ -70,9 +70,10 @@ var
 implementation
 
 uses Math,
-  CastleFilesUtils, CastleGLUtils, CastleKeysMouse,
-  CastleUtils, CastleSceneCore, X3DNodes, CastleRenderContext, CastleRenderOptions,
-  GameWindow, GamePlayer, GameHUD;
+  CastleFilesUtils, CastleGLUtils, CastleKeysMouse, CastleWindow,
+  CastleUtils, CastleSceneCore, X3DNodes, CastleRenderContext,
+  CastleRenderOptions,
+  GamePlayer, GameHUD;
 
 const
   NeutralPoseTolerance = 0.33; // in seconds
@@ -259,13 +260,13 @@ begin
   if (not Player.Dead) and (not Dead) and
     { not before "tutorial" finished } ViewportWorm.Exists then
   begin
-    if Window.Container.Pressed[keyA] then
+    if Application.MainWindow.Container.Pressed[keyA] then
       Rotate(-1);
-    if Window.Container.Pressed[keyD] then
+    if Application.MainWindow.Container.Pressed[keyD] then
       Rotate(+1);
-    if Window.Container.Pressed[keyW] then
+    if Application.MainWindow.Container.Pressed[keyW] then
       Move(+1);
-    if Window.Container.Pressed[keyS] then
+    if Application.MainWindow.Container.Pressed[keyS] then
       Move(-1);
   end;
 

@@ -43,8 +43,8 @@ implementation
 
 uses Math,
   CastleFilesUtils, CastleGLUtils, CastleKeysMouse,
-  CastleUtils, CastlePlayer, CastleSceneCore,
-  GameWindow, GamePlayer;
+  CastleUtils, CastlePlayer, CastleSceneCore, CastleWindow,
+  GamePlayer;
 
 const
   AnimPlayingSpeed = 1.0;
@@ -92,10 +92,10 @@ end;
 procedure TPlayer3rdPerson.Update(const SecondsPassed: Single; var RemoveMe: TRemoveType);
 begin
   inherited;
-  if PlayerInput_Forward.IsPressed(Window.Container) or
-     PlayerInput_Backward.IsPressed(Window.Container) or
-     Player.Camera.MoveForward or
-     Player.Camera.MoveBackward then
+  if PlayerInput_Forward.IsPressed(Application.MainWindow.Container) or
+     PlayerInput_Backward.IsPressed(Application.MainWindow.Container) or
+     Player.WalkNavigation.MoveForward or
+     Player.WalkNavigation.MoveBackward then
     AnimationState := asRun else
     AnimationState := asIdle;
 end;

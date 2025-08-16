@@ -22,7 +22,7 @@ program mountains_of_fire;
 
 uses CastleWindow, CastleConfig, CastleParameters, CastleLog, CastleUtils,
   CastleSoundEngine, CastleClassUtils,
-  Game, GamePlay, GameWindow;
+  GameInitialize, GameViewPlay;
 
 const
   Version = '1.1.0';
@@ -53,10 +53,10 @@ begin
   UserConfig.Load;
 
   SoundEngine.ParseParameters;
-  Window.FullScreen := true;
-  Window.ParseParameters;
+  Application.MainWindow.FullScreen := true;
+  Application.MainWindow.ParseParameters;
   Parameters.Parse(Options, @OptionProc, nil);
 
-  Window.OpenAndRun;
+  Application.MainWindow.OpenAndRun;
   UserConfig.Save;
 end.
